@@ -3,25 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Information Architecture v2 — Non-IT Solution</title>
+<title>After the Wash — Non-IT Solution Design System</title>
 <style>
   :root {
     --blue: #0ea5e9; --blue-bg: #e0f2fe; --blue-dk: #0369a1;
     --green: #10b981; --green-bg: #d1fae5; --green-dk: #065f46;
     --purple: #8b5cf6; --purple-bg: #ede9fe; --purple-dk: #5b21b6;
+    --teal: #14b8a6; --teal-bg: #ccfbf1; --teal-dk: #115e59;
     --amber: #f59e0b; --amber-bg: #fef3c7; --amber-dk: #92400e;
     --rose: #f43f5e; --rose-bg: #ffe4e6; --rose-dk: #9f1239;
-    --teal: #14b8a6; --teal-bg: #ccfbf1; --teal-dk: #115e59;
     --gray: #64748b; --gray-bg: #f1f5f9; --border: #e2e8f0;
+    --dark: #1e293b;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1e293b; padding: 40px 20px; line-height: 1.55; }
-  .w { max-width: 1400px; margin: 0 auto; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: var(--dark); line-height: 1.55; }
 
-  h1 { font-size: 26px; font-weight: 800; }
-  .sub { font-size: 13px; color: var(--gray); margin-bottom: 32px; }
+  /* ===== GLOBAL NAV ===== */
+  .top-bar { background: var(--dark); color: white; padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
+  .top-bar-inner { max-width: 1500px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .top-bar h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .top-bar .subtitle { font-size: 11px; opacity: 0.5; margin-top: 2px; }
+  .tab-nav { display: flex; gap: 4px; }
+  .tab-btn { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+  .tab-btn.active { background: white; color: var(--dark); }
+  .tab-btn .tab-num { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 800; text-align: center; line-height: 20px; margin-right: 6px; }
+  .tab-btn.active .tab-num { background: var(--dark); color: white; }
 
-  /* Tags */
+  /* ===== TAB CONTENT ===== */
+  .tab-content { display: none; padding: 40px 20px; }
+  .tab-content.active { display: block; }
+  .w { max-width: 1500px; margin: 0 auto; }
+
+  /* ===== SHARED: Tags ===== */
   .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.3px; vertical-align: middle; }
   .tag.vis { background: var(--blue-bg); color: var(--blue-dk); }
   .tag.svc { background: var(--purple-bg); color: var(--purple-dk); }
@@ -29,11 +43,10 @@
   .tag.tech { background: var(--amber-bg); color: var(--amber-dk); }
   .tag.ft { background: var(--rose-bg); color: var(--rose-dk); }
 
-  /* Top legend */
+  /* ===== TAB 1: INFO ARCHITECTURE ===== */
   .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 18px; background: #fff; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 40px; font-size: 12px; }
   .legend b { font-weight: 700; margin-right: 4px; }
 
-  /* Section header */
   .sh { display: flex; align-items: center; gap: 12px; margin: 48px 0 8px; }
   .sh:first-of-type { margin-top: 0; }
   .sn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; flex-shrink: 0; }
@@ -44,17 +57,15 @@
   .st { font-size: 18px; font-weight: 800; }
   .sd { font-size: 12px; color: var(--gray); }
 
-  /* Explanation block under section header */
   .explain { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin: 12px 0 18px; font-size: 13px; color: #475569; display: flex; gap: 12px; align-items: flex-start; }
   .explain .icon { font-size: 20px; flex-shrink: 0; }
-  .explain strong { color: #1e293b; }
+  .explain strong { color: var(--dark); }
 
-  /* Table */
   .tbl-wrap { overflow-x: auto; margin-bottom: 8px; }
-  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
-  th { background: var(--gray-bg); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); border-bottom: 2px solid var(--border); white-space: nowrap; }
-  td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
+  table.ia-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+  table.ia-table th { background: var(--gray-bg); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  table.ia-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  table.ia-table tr:last-child td { border-bottom: none; }
   .id { font-weight: 800; color: var(--gray); width: 30px; }
   .nm { font-weight: 700; white-space: nowrap; }
   td.content-cell { max-width: 320px; }
@@ -62,14 +73,12 @@
   .note { color: #94a3b8; font-size: 11px; }
   .hi { background: #fffbeb; }
 
-  /* Carrier badge */
   .carrier { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
   .carrier.c1 { background: var(--blue-bg); color: var(--blue-dk); }
   .carrier.c2 { background: var(--green-bg); color: var(--green-dk); }
   .carrier.c3a { background: var(--purple-bg); color: var(--purple-dk); }
   .carrier.c3b { background: var(--teal-bg); color: var(--teal-dk); }
 
-  /* Service flow visual */
   .flow-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 18px 0; }
   .flow-title { font-size: 15px; font-weight: 800; margin-bottom: 16px; }
   .flow-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
@@ -87,7 +96,6 @@
   .fs-s { color: var(--gray); font-style: italic; font-size: 11.5px; margin-top: 1px; }
   .fs-t { font-size: 10px; margin-top: 2px; }
 
-  /* Relationship diagram */
   .rel-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 48px 0 18px; }
   .rel-title { font-size: 16px; font-weight: 800; margin-bottom: 20px; text-align: center; }
   .rel-diagram { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
@@ -98,7 +106,6 @@
   .rel-arrow { font-size: 24px; color: #cbd5e1; padding: 0 4px; }
   .rel-arrow-label { font-size: 10px; color: var(--gray); display: block; }
 
-  /* Summary */
   .summary { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; border-radius: 14px; padding: 28px; margin-top: 48px; }
   .summary h2 { font-size: 17px; margin-bottom: 16px; }
   .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -107,19 +114,119 @@
   .summary-card .count { font-size: 32px; font-weight: 800; }
   .summary-card .items { font-size: 12px; opacity: 0.7; margin-top: 6px; line-height: 1.6; }
 
+  /* ===== TAB 2: TOUCHPOINT MATRIX ===== */
+  .section-label { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+  .section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .section-desc { font-size: 13px; color: var(--gray); margin-bottom: 20px; max-width: 800px; }
+
+  .matrix-scroll { overflow-x: auto; margin-bottom: 16px; }
+  .tp-matrix { border-collapse: collapse; width: 100%; min-width: 1100px; background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .tp-matrix th, .tp-matrix td { border: 1px solid var(--border); padding: 0; vertical-align: top; }
+  .tp-matrix thead th { background: var(--dark); color: white; text-align: center; padding: 14px 8px; font-size: 12px; font-weight: 700; }
+  .tp-matrix thead th .stage-num { display: block; font-size: 20px; font-weight: 800; margin-bottom: 2px; opacity: 0.6; }
+  .tp-matrix thead th .stage-name { display: block; font-size: 13px; }
+  .tp-matrix thead th .stage-space { display: block; font-size: 10px; opacity: 0.5; margin-top: 2px; }
+  .tp-matrix thead th:first-child { background: var(--gray-bg); color: var(--dark); width: 130px; }
+  .tp-matrix tbody th { background: var(--gray-bg); padding: 12px 10px; font-size: 12px; font-weight: 700; text-align: left; width: 130px; vertical-align: middle; }
+  .tp-matrix tbody th .carrier-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .tp-matrix tbody th .carrier-sub { font-weight: 400; font-size: 10px; color: var(--gray); display: block; margin-top: 2px; }
+  .carrier-01 th { border-left: 4px solid var(--blue) !important; }
+  .carrier-02 th { border-left: 4px solid var(--green) !important; }
+  .carrier-3a th { border-left: 4px solid var(--purple) !important; }
+  .carrier-3b th { border-left: 4px solid var(--teal) !important; }
+  .carrier-tech th { border-left: 4px solid var(--amber) !important; }
+
+  .tp-cell { padding: 10px; min-height: 60px; }
+  .tp-cell.empty { background: #fafbfc; }
+  .tp-cell .item { font-size: 11.5px; padding: 5px 8px; border-radius: 6px; margin-bottom: 4px; line-height: 1.45; }
+  .tp-cell .item:last-child { margin-bottom: 0; }
+  .tp-cell .item.i-vis { background: var(--blue-bg); color: var(--blue-dk); }
+  .tp-cell .item.i-copy { background: var(--green-bg); color: var(--green-dk); }
+  .tp-cell .item.i-svc { background: var(--purple-bg); color: var(--purple-dk); }
+  .tp-cell .item.i-tech { background: var(--amber-bg); color: var(--amber-dk); }
+  .tp-cell .item.i-ft { background: var(--rose-bg); color: var(--rose-dk); }
+  .tp-cell .item .item-id { font-weight: 800; margin-right: 3px; }
+
+  .tp-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; margin: 12px 0 0; color: var(--gray); }
+  .tp-legend-item { display: flex; align-items: center; gap: 5px; }
+  .tp-legend-dot { width: 14px; height: 14px; border-radius: 4px; }
+
+  .cm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; margin-top: 16px; }
+  .cm-card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.15s; }
+  .cm-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .cm-head { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
+  .cm-head-left { display: flex; align-items: center; gap: 8px; }
+  .cm-id { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: white; flex-shrink: 0; }
+  .cm-id.c1 { background: var(--blue); }
+  .cm-id.c2 { background: var(--green); }
+  .cm-id.c3a { background: var(--purple); }
+  .cm-id.c3b { background: var(--teal); }
+  .cm-name { font-weight: 700; font-size: 14px; }
+  .cm-carrier { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .cm-carrier.cc1 { background: var(--blue-bg); color: var(--blue-dk); }
+  .cm-carrier.cc2 { background: var(--green-bg); color: var(--green-dk); }
+  .cm-carrier.cc3a { background: var(--purple-bg); color: var(--purple-dk); }
+  .cm-carrier.cc3b { background: var(--teal-bg); color: var(--teal-dk); }
+  .cm-body { padding: 12px 16px; }
+  .cm-row { display: grid; grid-template-columns: 90px 1fr; gap: 6px; padding: 5px 0; border-bottom: 1px dashed #f5f5f5; font-size: 12px; }
+  .cm-row:last-child { border-bottom: none; }
+  .cm-label { font-weight: 700; color: var(--gray); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; padding-top: 1px; }
+  .cm-val { color: #334155; }
+  .cm-val .tag { font-size: 9px; padding: 1px 6px; border-radius: 3px; margin: 0 2px; }
+  .cm-val .note { font-size: 11px; color: #94a3b8; }
+
+  .divider { height: 1px; background: var(--border); margin: 56px 0 48px; }
+
+  .guide { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 48px; font-size: 13px; color: #475569; }
+  .guide strong { color: var(--dark); }
+  .guide-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 12px; }
+  .guide-col h3 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+
+  /* ===== TAB 3: MEGA MATRIX ===== */
+  table.mega { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+  table.mega th { background: var(--gray-bg); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  table.mega td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  table.mega tr:last-child td { border-bottom: none; }
+
+  /* ===== FOOTER ===== */
+  .page-footer { text-align: center; padding: 32px 20px; font-size: 11px; color: #94a3b8; border-top: 1px solid var(--border); margin-top: 48px; }
+
   @media (max-width: 900px) {
     .flow-grid { grid-template-columns: 1fr; }
     .summary-grid { grid-template-columns: 1fr; }
     .rel-diagram { flex-direction: column; }
     .rel-arrow { transform: rotate(90deg); }
+    .cm-grid { grid-template-columns: 1fr; }
+    .guide-cols { grid-template-columns: 1fr; }
+    .tab-nav { width: 100%; overflow-x: auto; }
   }
 </style>
 </head>
 <body>
+
+<!-- ===== TOP NAV ===== -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div>
+      <h1>After the Wash — Non-IT Design System</h1>
+      <div class="subtitle">Expectation Management &nbsp;|&nbsp; Harlem United &nbsp;|&nbsp; 2026-04-13</div>
+    </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('ia')"><span class="tab-num">1</span>Information Architecture</button>
+      <button class="tab-btn" onclick="switchTab('tp')"><span class="tab-num">2</span>Touchpoint Matrix</button>
+      <button class="tab-btn" onclick="switchTab('cm')"><span class="tab-num">3</span>Content Model</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: INFORMATION ARCHITECTURE                              -->
+<!-- ============================================================ -->
+<div id="tab-ia" class="tab-content active">
 <div class="w">
 
-<h1>Information Architecture v2</h1>
-<p class="sub">Non-IT Solution — Expectation Management &nbsp;|&nbsp; After the Wash × Harlem United &nbsp;|&nbsp; 2026-04-13</p>
+<h2 style="font-size:22px; font-weight:800; margin-bottom:4px;">Information Architecture v2</h2>
+<p style="font-size:13px; color:var(--gray); margin-bottom:28px;">18 條資訊項目（A-R）× 5 個載體 × Output 形式分類</p>
 
 <div class="legend">
   <div><b>Output 形式：</b></div>
@@ -130,7 +237,7 @@
   <div><span class="tag ft">FT</span> 融入 First-Timer 功能</div>
 </div>
 
-<!-- ==================== 03a vs 03b RELATIONSHIP ==================== -->
+<!-- 03a vs 03b RELATIONSHIP -->
 <div class="rel-box">
   <div class="rel-title">03 拆成兩個層面的關係</div>
   <div class="rel-diagram">
@@ -150,11 +257,11 @@
     </div>
   </div>
   <div style="text-align:center; margin-top:16px; font-size:12px; color:var(--gray); max-width:600px; margin-left:auto; margin-right:auto;">
-    <strong style="color:#1e293b;">關鍵差異：</strong>03a 是一個「物件」——設計重點是資訊密度、可掃視性、空間放置位置。03b 是一個「流程」——設計重點是人的行為腳本、情境判斷、訓練方式。兩者共享同一套資訊，但 output 完全不同。
+    <strong style="color:var(--dark);">關鍵差異：</strong>03a 是一個「物件」——設計重點是資訊密度、可掃視性、空間放置位置。03b 是一個「流程」——設計重點是人的行為腳本、情境判斷、訓練方式。兩者共享同一套資訊，但 output 完全不同。
   </div>
 </div>
 
-<!-- ==================== 01 DAILY INFO BOARD ==================== -->
+<!-- 01 DAILY INFO BOARD -->
 <div class="sh">
   <div class="sn c1">01</div>
   <div><div class="st">Daily Info Board</div><div class="sd">入口/等候區的每日資訊板 ｜ 對象：所有客戶 ｜ 每日更新</div></div>
@@ -164,33 +271,29 @@
   <div><strong>本質：</strong>一塊讓客戶自己看的板子。所有人進來第一眼就能知道今天的狀況。設計重點是模組化（staff 每天只要翻牌/寫字）和低識字門檻。</div>
 </div>
 <div class="tbl-wrap">
-<table>
+<table class="ia-table">
 <thead><tr><th></th><th>資訊項目</th><th>具體內容</th><th>Output 形式</th><th>設計要點</th></tr></thead>
 <tbody>
 <tr>
-  <td class="id">A</td>
-  <td class="nm">今日服務狀態</td>
+  <td class="id">A</td><td class="nm">今日服務狀態</td>
   <td class="content-cell">哪些服務今天開放/關閉/異動<br><span class="note">例：淋浴 ✓ ｜ 洗衣 ✗ 維修中 ｜ 診所 10am 起</span></td>
   <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>翻牌式模組設計 + 服務項目文字模板</td>
   <td>需設計每日更新的最簡操作（翻牌/磁鐵/白板區）</td>
 </tr>
 <tr>
-  <td class="id">B</td>
-  <td class="nm">今日活動/公告</td>
+  <td class="id">B</td><td class="nm">今日活動/公告</td>
   <td class="content-cell">特殊活動、臨時變動<br><span class="note">例：免費理髮 2-4pm ｜ 下週一休館</span></td>
   <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>可手寫的留白區域</td>
   <td>白板/粉筆板區，staff 可自由書寫</td>
 </tr>
 <tr>
-  <td class="id">C</td>
-  <td class="nm">歡迎語 / 社群語句</td>
+  <td class="id">C</td><td class="nm">歡迎語 / 社群語句</td>
   <td class="content-cell">每日正面肯定語、氛圍營造<br><span class="note">語氣：restorative、「家」而非「機關」</span></td>
   <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>固定印刷 or 可替換卡片</td>
   <td>Poetic words（工作坊共識）<br>可與 Community Agreement 聯動</td>
 </tr>
 <tr class="hi">
-  <td class="id">D</td>
-  <td class="nm">基本流程圖（常駐）</td>
+  <td class="id">D</td><td class="nm">基本流程圖（常駐）</td>
   <td class="content-cell">報到 → 等待 → 被叫號 → 拿用品 → 淋浴 → 離開<br><span class="note">純圖示 + 數字，不依賴文字閱讀能力</span></td>
   <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag ft">FT</span><br>固定印刷海報</td>
   <td>對 regular 是背景、對 first-timer 是核心導航<br>不需每日更新</td>
@@ -199,7 +302,7 @@
 </table>
 </div>
 
-<!-- ==================== 02 IN-SPACE NODE SIGNAGE ==================== -->
+<!-- 02 IN-SPACE NODE SIGNAGE -->
 <div class="sh">
   <div class="sn c2">02</div>
   <div><div class="st">In-Space Node Signage</div><div class="sd">各空間節點的標示系統 ｜ 對象：所有客戶 ｜ 半固定</div></div>
@@ -209,46 +312,36 @@
   <div><strong>本質：</strong>分散在空間各處的標示。每個節點回答一個問題：「這裡可以做什麼？接下來去哪？」。設計重點是全圖示化、邀請式語氣、多語言、與空間環境整合。</div>
 </div>
 <div class="tbl-wrap">
-<table>
+<table class="ia-table">
 <thead><tr><th></th><th>資訊項目</th><th>具體內容</th><th>位置</th><th>Output 形式</th><th>設計要點</th></tr></thead>
 <tbody>
 <tr class="hi">
-  <td class="id">E</td>
-  <td class="nm">Shower Kit 取用說明</td>
-  <td>可取用物品清單<br>數量規則（邀請語氣）</td>
-  <td>Resource Table</td>
+  <td class="id">E</td><td class="nm">Shower Kit 取用說明</td>
+  <td>可取用物品清單<br>數量規則（邀請語氣）</td><td>Resource Table</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span></td>
   <td>全圖示化、英/西/純圖像三版<br>「歡迎取用」非「限拿一份」</td>
 </tr>
 <tr>
-  <td class="id">F</td>
-  <td class="nm">Shower 時間提示</td>
-  <td>淋浴步驟建議<br>時間感引導（非倒數）</td>
-  <td>淋浴間內部</td>
+  <td class="id">F</td><td class="nm">Shower 時間提示</td>
+  <td>淋浴步驟建議<br>時間感引導（非倒數）</td><td>淋浴間內部</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag tech">TECH</span></td>
   <td>客戶自主節奏、無壓力感<br>需與 Sheldon 計時介面協調、防水材質</td>
 </tr>
 <tr class="hi">
-  <td class="id">G</td>
-  <td class="nm">等候區導引</td>
-  <td>這裡是什麼空間<br>叫到名字後去哪</td>
-  <td>等候/用餐區</td>
+  <td class="id">G</td><td class="nm">等候區導引</td>
+  <td>這裡是什麼空間<br>叫到名字後去哪</td><td>等候/用餐區</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag ft">FT</span></td>
   <td>可能與 01 Info Board 鄰近放置<br>需現場勘查決定位置</td>
 </tr>
 <tr>
-  <td class="id">H</td>
-  <td class="nm">Community Agreement</td>
-  <td>與 regular clients 共創的公約<br>「我們一起決定的」</td>
-  <td>等候區/入口（待定）</td>
+  <td class="id">H</td><td class="nm">Community Agreement</td>
+  <td>與 regular clients 共創的公約<br>「我們一起決定的」</td><td>等候區/入口（待定）</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
   <td>英/西/純圖像三版<br>視覺系統與 E-G 一致</td>
 </tr>
 <tr>
-  <td class="id">I</td>
-  <td class="nm">Post-Shower 指引</td>
-  <td>洗完後的下一步<br>（換衣、洗衣、離開路線）</td>
-  <td>淋浴間出口/更衣區</td>
+  <td class="id">I</td><td class="nm">Post-Shower 指引</td>
+  <td>洗完後的下一步<br>（換衣、洗衣、離開路線）</td><td>淋浴間出口/更衣區</td>
   <td><span class="tag vis">VISUAL</span></td>
   <td>收尾感而非催促感</td>
 </tr>
@@ -256,7 +349,7 @@
 </table>
 </div>
 
-<!-- ==================== 03a ONE-SHEET 視覺物件 ==================== -->
+<!-- 03a ONE-SHEET -->
 <div class="sh">
   <div class="sn c3a">03a</div>
   <div><div class="st">One-Sheet — 視覺物件</div><div class="sd">貼在工作站的實體快速參考卡 ｜ 對象：志工/工作人員 ｜ 固定印刷</div></div>
@@ -266,40 +359,35 @@
   <div><strong>本質：</strong>一張（或兩張）貼在前台/後台牆上的卡片，志工在值班時<strong>掃一眼就能找到答案</strong>。不是訓練教材，是現場即時參考。設計重點是資訊層級、可掃視性（scanability）、不需翻頁。</div>
 </div>
 <div class="tbl-wrap">
-<table>
+<table class="ia-table">
 <thead><tr><th></th><th>卡片上的區塊</th><th>呈現什麼資訊</th><th>Output 形式</th><th>設計要點</th></tr></thead>
 <tbody>
 <tr class="hi">
-  <td class="id">J</td>
-  <td class="nm">叫號話術速查</td>
+  <td class="id">J</td><td class="nm">叫號話術速查</td>
   <td>標準叫號語句<br>No-show 處理（等 / 跳過 / 排回）<br><span class="note">配合 tech 系統的叫號邏輯</span></td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag tech">TECH</span></td>
   <td>DO / SAY 兩欄格式<br>放在前台工作站旁</td>
 </tr>
 <tr class="hi">
-  <td class="id">K</td>
-  <td class="nm">First-Timer 速查</td>
+  <td class="id">K</td><td class="nm">First-Timer 速查</td>
   <td>看到 FT tag 後只需講的三件事<br><span class="note">「零食在那、會叫你名字、用品在那桌」</span></td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span> <span class="tag tech">TECH</span></td>
   <td>醒目標示、放在前台最顯眼位置<br>三句話就夠，其餘交給 signage</td>
 </tr>
 <tr>
-  <td class="id">L</td>
-  <td class="nm">等候互動速查</td>
+  <td class="id">L</td><td class="nm">等候互動速查</td>
   <td>「還要等多久？」的回答範本<br>何時主動關心 vs. 不打擾</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
   <td>DO / SAY / DON'T 三欄<br>放在等候區志工站旁</td>
 </tr>
 <tr>
-  <td class="id">M</td>
-  <td class="nm">Non-Visible Needs 提示</td>
+  <td class="id">M</td><td class="nm">Non-Visible Needs 提示</td>
   <td>觀察信號提示<br>何時轉介、找誰</td>
   <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
   <td>不貼標籤的語言<br>轉介聯絡人（Richard）標示清楚</td>
 </tr>
 <tr>
-  <td class="id">N</td>
-  <td class="nm">Timing 時間軸</td>
+  <td class="id">N</td><td class="nm">Timing 時間軸</td>
   <td>沿著客戶旅程的介入/退後時機<br><span class="note">報到→等候→叫號→用品→淋浴→離開</span></td>
   <td><span class="tag vis">VISUAL</span></td>
   <td>橫向時間軸<br>標示「介入」和「退後」的節點</td>
@@ -308,7 +396,7 @@
 </table>
 </div>
 
-<!-- ==================== 03b SERVICE FLOW ==================== -->
+<!-- 03b SERVICE FLOW -->
 <div class="sh">
   <div class="sn c3b">03b</div>
   <div><div class="st">服務流程設計</div><div class="sd">志工訓練用 SOP / Service Blueprint ｜ 對象：新志工 + 訓練者 ｜ 訓練時使用</div></div>
@@ -318,33 +406,29 @@
   <div><strong>本質：</strong>不是貼在牆上的東西，是<strong>設計「人怎麼行動」的流程</strong>。回答的是：志工從到場到離場，面對不同客戶類型，每個時刻該做什麼、說什麼、不做什麼。設計重點是情境腳本化、可演練、可納入現有訓練流程。</div>
 </div>
 <div class="tbl-wrap">
-<table>
+<table class="ia-table">
 <thead><tr><th></th><th>流程設計項目</th><th>設計什麼</th><th>Output 形式</th><th>設計要點</th></tr></thead>
 <tbody>
 <tr>
-  <td class="id">O</td>
-  <td class="nm">三種客戶情境 SOP</td>
+  <td class="id">O</td><td class="nm">三種客戶情境 SOP</td>
   <td>Regular / First-Timer / Non-Visible Needs<br>每種情境從報到到離場的完整行為腳本</td>
   <td><span class="tag svc">SERVICE FLOW</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span></td>
   <td>情境式設計（非線性清單）<br>包含口語話術範例<br>見下方流程圖</td>
 </tr>
 <tr>
-  <td class="id">P</td>
-  <td class="nm">Timing Intervention 判斷邏輯</td>
+  <td class="id">P</td><td class="nm">Timing Intervention 判斷邏輯</td>
   <td>什麼時候介入（主動提醒/關心/引導）<br>什麼時候退後（讓客戶自主）<br>Framing: 「創造修復時刻」非「管理流程」</td>
   <td><span class="tag svc">SERVICE FLOW</span> <span class="tag vis">VISUAL</span></td>
   <td>決策樹 or if/then 邏輯圖<br>需要 Richard 的現場經驗驗證</td>
 </tr>
 <tr>
-  <td class="id">Q</td>
-  <td class="nm">志工訓練 Walkthrough</td>
+  <td class="id">Q</td><td class="nm">志工訓練 Walkthrough</td>
   <td>新志工第一天怎麼學？<br>帶著走一遍空間 → 講解 One-Sheet → 跟班觀察 → 獨立值班</td>
   <td><span class="tag svc">SERVICE FLOW</span> <span class="tag vis">VISUAL</span></td>
   <td>訓練 SOP 流程圖<br>哪些是「必學」、哪些是「看情境」<br>納入 Richard 現有訓練模式</td>
 </tr>
 <tr>
-  <td class="id">R</td>
-  <td class="nm">例外情境處理</td>
+  <td class="id">R</td><td class="nm">例外情境處理</td>
   <td>客戶 no-show 後回來怎麼辦？<br>情緒激動時的 de-escalation<br>超時佔用淋浴間</td>
   <td><span class="tag svc">SERVICE FLOW</span> <span class="tag copy">COPY</span> <span class="tag tech">TECH</span></td>
   <td>需要 HU 提供現有 protocol<br>話術要 de-escalation 導向<br>部分需與 tech 系統配合</td>
@@ -353,11 +437,10 @@
 </table>
 </div>
 
-<!-- 03b SERVICE FLOW DETAIL -->
+<!-- Service Flow Detail -->
 <div class="flow-box">
   <div class="flow-title">O. 三種客戶情境的服務流程</div>
   <div class="flow-grid">
-
     <div class="flow-col">
       <div class="flow-col-h a">Regular Client 固定客戶</div>
       <div class="flow-steps">
@@ -368,7 +451,6 @@
         <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">離開：自然道別</div><div class="fs-s">不需額外引導</div></div></div>
       </div>
     </div>
-
     <div class="flow-col">
       <div class="flow-col-h b">First-Timer 第一次來 <span class="tag ft" style="margin-left:4px">FT</span></div>
       <div class="flow-steps">
@@ -379,7 +461,6 @@
         <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">離開：溫暖收尾</div><div class="fs-s">"下次來不用擔心，你已經知道了"</div></div></div>
       </div>
     </div>
-
     <div class="flow-col">
       <div class="flow-col-h c">Non-Visible Needs 非顯性需求</div>
       <div class="flow-steps">
@@ -390,21 +471,18 @@
         <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">持續照常服務</div><div class="fs-s">不改變對待方式</div></div></div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- ==================== MEGA MATRIX ==================== -->
+<!-- MEGA MATRIX -->
 <div class="sh" style="margin-top:56px">
   <div><div class="st">完整總覽：A-R 所有資訊 × 載體 × Output</div></div>
 </div>
 <div class="tbl-wrap">
-<table>
+<table class="mega">
 <thead>
 <tr>
-  <th>ID</th>
-  <th>資訊項目</th>
-  <th>落在哪</th>
+  <th>ID</th><th>資訊項目</th><th>落在哪</th>
   <th style="text-align:center">VISUAL<br><span style="font-weight:400;font-size:10px;text-transform:none">視覺物件</span></th>
   <th style="text-align:center">SERVICE<br><span style="font-weight:400;font-size:10px;text-transform:none">服務流程</span></th>
   <th style="text-align:center">COPY<br><span style="font-weight:400;font-size:10px;text-transform:none">文案</span></th>
@@ -435,7 +513,7 @@
 </table>
 </div>
 
-<!-- ==================== SUMMARY ==================== -->
+<!-- SUMMARY -->
 <div class="summary">
   <h2>Output 統計 — 四個載體各需要什麼</h2>
   <div class="summary-grid">
@@ -463,5 +541,483 @@
 </div>
 
 </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: TOUCHPOINT MATRIX                                     -->
+<!-- ============================================================ -->
+<div id="tab-tp" class="tab-content">
+<div class="w">
+
+<div class="section-label">Part 1</div>
+<div class="section-title">Touchpoint Matrix</div>
+<div class="section-desc">橫軸 = 客戶在空間中的旅程階段（對應平面圖 ①-⑥）｜ 縱軸 = 資訊載體 ｜ 格子 = 該階段、該載體要傳遞的具體資訊</div>
+
+<div class="guide" style="margin-bottom:28px;">
+  <strong>怎麼讀這張表：</strong> 沿著客戶在空間中的移動路徑（橫軸），看每個載體（縱軸）在哪個階段要傳遞什麼資訊。每個格子裡的色塊 = 一條具體資訊，編號對應 Tab 3 Content Model 的規格卡。
+</div>
+
+<div class="matrix-scroll">
+<table class="tp-matrix">
+<thead>
+<tr>
+  <th></th>
+  <th><span class="stage-num">①</span><span class="stage-name">Entrance</span><span class="stage-space">入口 / JACE's</span></th>
+  <th><span class="stage-num"></span><span class="stage-name">Registration</span><span class="stage-space">前台報到</span></th>
+  <th><span class="stage-num">②③</span><span class="stage-name">Waiting / Food</span><span class="stage-space">等候區 / 用餐區</span></th>
+  <th><span class="stage-num">④</span><span class="stage-name">Shower Kits</span><span class="stage-space">Resource Table</span></th>
+  <th><span class="stage-num">⑤</span><span class="stage-name">Shower</span><span class="stage-space">淋浴間</span></th>
+  <th><span class="stage-num">⑥</span><span class="stage-name">Return / Exit</span><span class="stage-space">歸還 / 離開</span></th>
+</tr>
+</thead>
+<tbody>
+
+<!-- 01 Info Board -->
+<tr class="carrier-01">
+  <th><span class="carrier-icon">📋</span>01 Info Board<span class="carrier-sub">每日更新</span></th>
+  <td><div class="tp-cell">
+    <div class="item i-vis"><span class="item-id">A</span> 今日服務狀態</div>
+    <div class="item i-copy"><span class="item-id">B</span> 今日活動/公告</div>
+    <div class="item i-vis"><span class="item-id">C</span> 歡迎語</div>
+    <div class="item i-ft"><span class="item-id">D</span> 常駐流程圖</div>
+  </div></td>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell">
+    <div class="item i-vis" style="opacity:0.5"><span class="item-id">A'</span> 分板：淋浴相關資訊（若分兩處放置）</div>
+  </div></td>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell empty"></div></td>
+</tr>
+
+<!-- 02 Signage -->
+<tr class="carrier-02">
+  <th><span class="carrier-icon">🪧</span>02 Signage<span class="carrier-sub">半固定</span></th>
+  <td><div class="tp-cell">
+    <div class="item i-vis"><span class="item-id">H</span> Community Agreement</div>
+  </div></td>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell">
+    <div class="item i-ft"><span class="item-id">G</span> 等候區導引：這裡是什麼、叫號後去哪</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-ft"><span class="item-id">E</span> 取用說明：可拿什麼、邀請語氣、全圖示</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-vis"><span class="item-id">F</span> 時間提示：淋浴步驟、自主節奏</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-vis"><span class="item-id">I</span> Post-shower 指引：下一步去哪</div>
+  </div></td>
+</tr>
+
+<!-- 03a One-Sheet -->
+<tr class="carrier-3a">
+  <th><span class="carrier-icon">📄</span>03a One-Sheet<span class="carrier-sub">志工速查卡</span></th>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell">
+    <div class="item i-ft"><span class="item-id">K</span> FT 速查：看到 tag → 講三件事</div>
+    <div class="item i-copy"><span class="item-id">J</span> 叫號話術：標準語句</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-copy"><span class="item-id">L</span> 等候互動：回答等待問題、何時關心</div>
+    <div class="item i-vis"><span class="item-id">N</span> Timing 時間軸：介入 vs. 退後</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-copy"><span class="item-id">M</span> Non-Visible Needs：觀察信號、轉介</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-vis"><span class="item-id">N</span> Timing：超時判斷、何時提醒</div>
+  </div></td>
+  <td><div class="tp-cell empty"></div></td>
+</tr>
+
+<!-- 03b Service Flow -->
+<tr class="carrier-3b">
+  <th><span class="carrier-icon">🔀</span>03b Service Flow<span class="carrier-sub">訓練用 SOP</span></th>
+  <td><div class="tp-cell">
+    <div class="item i-svc" style="opacity:0.5">（JACE's 已處理 intake — 不在我們設計範圍內）</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-svc"><span class="item-id">O</span> Regular: 打招呼、登記</div>
+    <div class="item i-ft"><span class="item-id">O</span> FT: 辨識 tag → 三句話引導</div>
+    <div class="item i-svc"><span class="item-id">R</span> 例外：no-show 回來的處理</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-svc"><span class="item-id">O</span> Regular: 退後、不主動引導</div>
+    <div class="item i-svc"><span class="item-id">O</span> NVN: 觀察、不詢問</div>
+    <div class="item i-svc"><span class="item-id">P</span> Timing 判斷：何時介入</div>
+    <div class="item i-svc"><span class="item-id">R</span> 例外：de-escalation</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-ft"><span class="item-id">O</span> FT: 帶到 kit 區、指向標示、退後</div>
+    <div class="item i-svc"><span class="item-id">O</span> NVN: 提供選擇非指令</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-svc"><span class="item-id">P</span> Timing：超時判斷邏輯</div>
+    <div class="item i-svc"><span class="item-id">R</span> 例外：佔用淋浴間處理</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-ft"><span class="item-id">O</span> FT: 溫暖收尾語句</div>
+    <div class="item i-svc"><span class="item-id">O</span> Regular: 自然道別</div>
+  </div></td>
+</tr>
+
+<!-- Tech -->
+<tr class="carrier-tech">
+  <th><span class="carrier-icon">💻</span>Tech System<span class="carrier-sub">Sheldon 負責</span></th>
+  <td><div class="tp-cell empty"></div></td>
+  <td><div class="tp-cell">
+    <div class="item i-tech">登記姓名、顯示 FT tag</div>
+    <div class="item i-tech">排隊佇列管理</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-tech">等候狀態查詢（staff 查、不公開顯示）</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-tech">Getting Ready 狀態（待開發）</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-tech">計時系統（配合 F signage）</div>
+  </div></td>
+  <td><div class="tp-cell">
+    <div class="item i-tech">完成標記、釋出淋浴間</div>
+  </div></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="tp-legend">
+  <div class="tp-legend-item"><div class="tp-legend-dot" style="background:var(--blue-bg);border:1px solid var(--blue)"></div> VISUAL 視覺設計</div>
+  <div class="tp-legend-item"><div class="tp-legend-dot" style="background:var(--green-bg);border:1px solid var(--green)"></div> COPY 文案</div>
+  <div class="tp-legend-item"><div class="tp-legend-dot" style="background:var(--purple-bg);border:1px solid var(--purple)"></div> SERVICE 服務流程</div>
+  <div class="tp-legend-item"><div class="tp-legend-dot" style="background:var(--amber-bg);border:1px solid var(--amber)"></div> TECH 科技</div>
+  <div class="tp-legend-item"><div class="tp-legend-dot" style="background:var(--rose-bg);border:1px solid var(--rose)"></div> FT First-Timer 融入</div>
+  <div class="tp-legend-item" style="opacity:0.5">半透明 = 待確認 / 非主要</div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: CONTENT MODEL                                         -->
+<!-- ============================================================ -->
+<div id="tab-cm" class="tab-content">
+<div class="w">
+
+<div class="section-label">Part 2</div>
+<div class="section-title">Content Model</div>
+<div class="section-desc">每條資訊的完整規格卡 — Amber 設計視覺物件、撰寫文案時可直接當 brief 使用</div>
+
+<div class="cm-grid">
+
+<!-- A -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c1">A</div><div class="cm-name">今日服務狀態</div></div><div class="cm-carrier cc1">01 Board</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">今天哪些服務開放 / 關閉 / 有異動</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">淋浴 ✓ ｜ 洗衣 ✗ 維修中 ｜ 診所 10am 起</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有客戶（含 FT）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">① Entrance</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">每日（開門前更新）</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">英文 + 圖示（圖示為主、文字為輔）</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">低 — 圖示可獨立傳達意義</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 翻牌/磁鐵模組 <span class="tag copy">COPY</span> 服務項目模板</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">HU 工作人員（每日更新操作）</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">需設計最簡更新機制（翻牌 or 磁鐵 or 白板區）<br>Staff 30 秒內能完成更新</div></div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c1">B</div><div class="cm-name">今日活動 / 公告</div></div><div class="cm-carrier cc1">01 Board</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">特殊活動、臨時變動、季節/節日訊息</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">免費理髮 2-4pm ｜ 下週一休館 ｜ Happy Spring!</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有客戶</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">① Entrance</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">每日 / 有活動時</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">英文（手寫）</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">中 — 需基本閱讀能力</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 可手寫留白區 <span class="tag copy">COPY</span> 偶爾</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">HU 工作人員</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">白板 or 粉筆板區域，staff 自由書寫<br>預留足夠空間、附筆</div></div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c1">C</div><div class="cm-name">歡迎語 / 社群語句</div></div><div class="cm-carrier cc1">01 Board</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">正面肯定語句、restorative 氛圍營造</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">Poetic words（工作坊共識風格）</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有客戶</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">① Entrance</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定 or 可替換卡片（週更 / 月更）</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">英文 + 可考慮西文</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">中 — 但重意境不重理解</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 視覺設計 <span class="tag copy">COPY</span> 語句撰寫</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 審核</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">語氣：像「家」不像「機關」<br>可與 H Community Agreement 視覺聯動</div></div>
+  </div>
+</div>
+
+<!-- D -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c1">D</div><div class="cm-name">基本流程圖（常駐）</div></div><div class="cm-carrier cc1">01 Board</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">報到 → 等待 → 叫號 → 拿用品 → 淋浴 → 離開</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">主要 First-Timer（Regular 可忽略）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">① Entrance（一進來就看到）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定印刷（不需更新）</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">純圖示 + 數字（無需文字）</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">無 — 完全視覺化</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 流程圖海報 <span class="tag ft">FT</span></div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → 印刷後固定</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">對應平面圖 ①-⑥ 編號<br>可考慮與平面圖整合成一張視覺</div></div>
+  </div>
+</div>
+
+<!-- E -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c2">E</div><div class="cm-name">Shower Kit 取用說明</div></div><div class="cm-carrier cc2">02 Signage</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">可取用物品清單、數量規則</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">毛巾 ×1 / 肥皂 ×1 / 洗髮精 自取 — 歡迎取用</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">淋浴客戶（含 FT）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">④ Shower Kits / Resource Table</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">半固定（物品品項變動時更新）</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">英文 / 西文 / 純圖像 三版</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">無 — 圖示版可獨立使用</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 圖示設計 <span class="tag copy">COPY</span> 邀請語氣文字 <span class="tag ft">FT</span></div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 審核語氣</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">Framing：「歡迎取用」非「限拿一份」<br>放在 Resource Table 正上方或正前方</div></div>
+  </div>
+</div>
+
+<!-- F -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c2">F</div><div class="cm-name">Shower 時間提示</div></div><div class="cm-carrier cc2">02 Signage</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">淋浴建議步驟與時間感引導</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">Warm rinse → Hair care → Body wash → Quick rinse</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">淋浴客戶</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">⑤ Shower Stall 內部</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">圖示為主 + 簡單英文</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">低</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 步驟海報 <span class="tag tech">TECH</span> 與計時系統配合</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 ｜ Sheldon 系統配合</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">客戶自主節奏、無壓力、非倒數<br>防水材質 ｜ 需與 Sheldon 計時介面座標</div></div>
+  </div>
+</div>
+
+<!-- G -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c2">G</div><div class="cm-name">等候區導引</div></div><div class="cm-carrier cc2">02 Signage</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">這個空間是什麼、叫到名字後去哪</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有客戶（主要 FT）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">②③ Waiting / Food</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">圖示為主</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">無</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 空間標示 <span class="tag ft">FT</span></div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">可能與 01 Info Board 鄰近放置<br>需現場勘查決定最佳位置</div></div>
+  </div>
+</div>
+
+<!-- H -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c2">H</div><div class="cm-name">Community Agreement</div></div><div class="cm-carrier cc2">02 Signage</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">與 regular clients 共創的空間公約</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有客戶</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">① Entrance（一進來就看到）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定（但需共創流程先完成）</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">英文 / 西文 / 純圖像 三版</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">低 — 圖像版可獨立使用</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 視覺設計 <span class="tag copy">COPY</span> 公約文字</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">HU 與客戶共創 → Parsons 視覺化</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">Framing：「我們一起決定的」非「規定」<br>需先設計共創流程</div></div>
+  </div>
+</div>
+
+<!-- I -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c2">I</div><div class="cm-name">Post-Shower 指引</div></div><div class="cm-carrier cc2">02 Signage</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">洗完後的下一步：歸還用品、換衣、洗衣、離開</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">淋浴客戶</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">⑥ Return / Exit</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">語言版本</div><div class="cm-val">圖示為主</div></div>
+    <div class="cm-row"><div class="cm-label">識字門檻</div><div class="cm-val">低</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 指引標示</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">收尾感、非催促感<br>對應平面圖⑥</div></div>
+  </div>
+</div>
+
+<!-- J -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3a">J</div><div class="cm-name">叫號話術速查</div></div><div class="cm-carrier cc3a">03a Sheet</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">標準叫號語句 + no-show 處理規則</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">"[Name], shower [#] is ready for you"<br>No-show 3 分鐘 → 跳到下一位 → 回來排第四</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">前台 + 後台志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">Registration（前台使用）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定（規則變更時更新）</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> DO/SAY 兩欄 <span class="tag copy">COPY</span> 話術 <span class="tag tech">TECH</span> 配合系統</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 審核</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">放在前台工作站旁、掃一眼就找到<br>no-show 邏輯需與 Sheldon 系統一致</div></div>
+  </div>
+</div>
+
+<!-- K -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3a">K</div><div class="cm-name">First-Timer 速查</div></div><div class="cm-carrier cc3a">03a Sheet</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">看到 FT tag → 只需講三件事</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">① 零食在那邊 ② 我們會叫你名字 ③ 用品在那桌</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">前台志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">Registration</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 醒目區塊 <span class="tag copy">COPY</span> 三句話 <span class="tag ft">FT</span> <span class="tag tech">TECH</span> tag</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 審核語氣</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">One-Sheet 上最醒目的位置<br>口語化、溫暖、三句話就夠</div></div>
+  </div>
+</div>
+
+<!-- L -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3a">L</div><div class="cm-name">等候互動速查</div></div><div class="cm-carrier cc3a">03a Sheet</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">回答等待問題的話術 + 主動關心 vs. 不打擾的判斷</div></div>
+    <div class="cm-row"><div class="cm-label">內容範例</div><div class="cm-val">DO: "大概還要 X 分鐘" (查系統)<br>DON'T: 猜測時間</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">等候區志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">②③ Waiting / Food</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> DO/SAY/DON'T 三欄 <span class="tag copy">COPY</span> 話術</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 審核</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">放在等候區志工站旁</div></div>
+  </div>
+</div>
+
+<!-- M -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3a">M</div><div class="cm-name">Non-Visible Needs 提示</div></div><div class="cm-carrier cc3a">03a Sheet</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">觀察信號提示 + 轉介時機 + 找誰</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">全程（主要在 ④ 觀察）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定（protocol 變更時更新）</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 觀察清單 <span class="tag copy">COPY</span> 不貼標籤的語言</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">HU 提供 protocol → Parsons 視覺化</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">轉介聯絡人（Richard）明確標示<br>需 HU 提供內部轉介標準</div></div>
+  </div>
+</div>
+
+<!-- N -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3a">N</div><div class="cm-name">Timing 時間軸</div></div><div class="cm-carrier cc3a">03a Sheet</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">沿客戶旅程標示介入/退後時機</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">全程（橫跨 ①-⑥）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">固定</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag vis">VISUAL</span> 橫向時間軸圖</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU/Richard 驗證</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">沿著 ①-⑥ 排列，標示「介入」和「退後」節點<br>是 03b P 的濃縮視覺版</div></div>
+  </div>
+</div>
+
+<!-- O -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3b">O</div><div class="cm-name">三種情境 SOP</div></div><div class="cm-carrier cc3b">03b Flow</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">Regular / FT / NVN 三種情境完整行為腳本</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">新志工 + 訓練者</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">全程（每個情境走完 ①-⑥）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">需要時（流程調整後）</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag svc">SERVICE FLOW</span> 情境腳本 <span class="tag copy">COPY</span> 話術 <span class="tag ft">FT</span></div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → Richard 驗證/演練</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">情境式（非線性清單）、可演練<br>納入 Richard 現有訓練模式</div></div>
+  </div>
+</div>
+
+<!-- P -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3b">P</div><div class="cm-name">Timing 判斷邏輯</div></div><div class="cm-carrier cc3b">03b Flow</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">什麼時候介入 / 退後的決策邏輯</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">志工（訓練時學習）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">全程</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">需要時</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag svc">SERVICE FLOW</span> 決策樹 <span class="tag vis">VISUAL</span> if/then 圖</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → Richard 現場經驗驗證</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">Framing：「創造修復時刻」非「管理流程」<br>03a N 是這個的濃縮視覺版</div></div>
+  </div>
+</div>
+
+<!-- Q -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3b">Q</div><div class="cm-name">志工訓練 Walkthrough</div></div><div class="cm-carrier cc3b">03b Flow</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">新志工學習路徑：走空間 → 講解 One-Sheet → 跟班 → 獨立</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">新志工 + Richard（訓練者）</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">全程（訓練時走完 ①-⑥）</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">需要時</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag svc">SERVICE FLOW</span> 訓練 SOP <span class="tag vis">VISUAL</span> 流程圖</div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">Parsons 設計 → HU 納入現有訓練</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">哪些「必學」vs.「看情境」<br>One-Sheet 本身 = 訓練教材（雙重用途）</div></div>
+  </div>
+</div>
+
+<!-- R -->
+<div class="cm-card">
+  <div class="cm-head"><div class="cm-head-left"><div class="cm-id c3b">R</div><div class="cm-name">例外情境處理</div></div><div class="cm-carrier cc3b">03b Flow</div></div>
+  <div class="cm-body">
+    <div class="cm-row"><div class="cm-label">內容描述</div><div class="cm-val">No-show 回來 / 情緒激動 / 超時佔用淋浴間</div></div>
+    <div class="cm-row"><div class="cm-label">受眾</div><div class="cm-val">所有志工</div></div>
+    <div class="cm-row"><div class="cm-label">旅程階段</div><div class="cm-val">Registration / Waiting / Shower</div></div>
+    <div class="cm-row"><div class="cm-label">更新頻率</div><div class="cm-val">需要時</div></div>
+    <div class="cm-row"><div class="cm-label">Output</div><div class="cm-val"><span class="tag svc">SERVICE FLOW</span> 處理腳本 <span class="tag copy">COPY</span> de-escalation <span class="tag tech">TECH</span></div></div>
+    <div class="cm-row"><div class="cm-label">維護者</div><div class="cm-val">HU 提供 protocol → Parsons 整合</div></div>
+    <div class="cm-row"><div class="cm-label">設計要點</div><div class="cm-val">需 HU 提供現有處理方式<br>no-show 邏輯需與 Sheldon 系統一致</div></div>
+  </div>
+</div>
+
+</div><!-- end cm-grid -->
+
+</div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page-footer">
+  After the Wash × Harlem United — Parsons MS SDM Capstone Spring 2026 &nbsp;|&nbsp; Non-IT Solution Design System &nbsp;|&nbsp; Last updated: 2026-04-13
+</div>
+
+<script>
+function switchTab(tab) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  // Show selected tab
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  // Activate button
+  const map = { ia: 0, tp: 1, cm: 2 };
+  document.querySelectorAll('.tab-btn')[map[tab]].classList.add('active');
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
 </body>
 </html>
