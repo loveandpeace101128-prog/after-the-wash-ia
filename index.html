@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Information Architecture v2 — Non-IT Solution</title>
+<style>
+  :root {
+    --blue: #0ea5e9; --blue-bg: #e0f2fe; --blue-dk: #0369a1;
+    --green: #10b981; --green-bg: #d1fae5; --green-dk: #065f46;
+    --purple: #8b5cf6; --purple-bg: #ede9fe; --purple-dk: #5b21b6;
+    --amber: #f59e0b; --amber-bg: #fef3c7; --amber-dk: #92400e;
+    --rose: #f43f5e; --rose-bg: #ffe4e6; --rose-dk: #9f1239;
+    --teal: #14b8a6; --teal-bg: #ccfbf1; --teal-dk: #115e59;
+    --gray: #64748b; --gray-bg: #f1f5f9; --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1e293b; padding: 40px 20px; line-height: 1.55; }
+  .w { max-width: 1400px; margin: 0 auto; }
+
+  h1 { font-size: 26px; font-weight: 800; }
+  .sub { font-size: 13px; color: var(--gray); margin-bottom: 32px; }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.3px; vertical-align: middle; }
+  .tag.vis { background: var(--blue-bg); color: var(--blue-dk); }
+  .tag.svc { background: var(--purple-bg); color: var(--purple-dk); }
+  .tag.copy { background: var(--green-bg); color: var(--green-dk); }
+  .tag.tech { background: var(--amber-bg); color: var(--amber-dk); }
+  .tag.ft { background: var(--rose-bg); color: var(--rose-dk); }
+
+  /* Top legend */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 14px 18px; background: #fff; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 40px; font-size: 12px; }
+  .legend b { font-weight: 700; margin-right: 4px; }
+
+  /* Section header */
+  .sh { display: flex; align-items: center; gap: 12px; margin: 48px 0 8px; }
+  .sh:first-of-type { margin-top: 0; }
+  .sn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; flex-shrink: 0; }
+  .sn.c1 { background: var(--blue); }
+  .sn.c2 { background: var(--green); }
+  .sn.c3a { background: var(--purple); }
+  .sn.c3b { background: var(--teal); }
+  .st { font-size: 18px; font-weight: 800; }
+  .sd { font-size: 12px; color: var(--gray); }
+
+  /* Explanation block under section header */
+  .explain { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin: 12px 0 18px; font-size: 13px; color: #475569; display: flex; gap: 12px; align-items: flex-start; }
+  .explain .icon { font-size: 20px; flex-shrink: 0; }
+  .explain strong { color: #1e293b; }
+
+  /* Table */
+  .tbl-wrap { overflow-x: auto; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+  th { background: var(--gray-bg); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .id { font-weight: 800; color: var(--gray); width: 30px; }
+  .nm { font-weight: 700; white-space: nowrap; }
+  td.content-cell { max-width: 320px; }
+  td.output-cell { max-width: 280px; }
+  .note { color: #94a3b8; font-size: 11px; }
+  .hi { background: #fffbeb; }
+
+  /* Carrier badge */
+  .carrier { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+  .carrier.c1 { background: var(--blue-bg); color: var(--blue-dk); }
+  .carrier.c2 { background: var(--green-bg); color: var(--green-dk); }
+  .carrier.c3a { background: var(--purple-bg); color: var(--purple-dk); }
+  .carrier.c3b { background: var(--teal-bg); color: var(--teal-dk); }
+
+  /* Service flow visual */
+  .flow-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 18px 0; }
+  .flow-title { font-size: 15px; font-weight: 800; margin-bottom: 16px; }
+  .flow-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .flow-col { border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .flow-col-h { padding: 10px 14px; font-weight: 700; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .flow-col-h.a { background: var(--blue-bg); color: var(--blue-dk); }
+  .flow-col-h.b { background: var(--rose-bg); color: var(--rose-dk); }
+  .flow-col-h.c { background: var(--amber-bg); color: var(--amber-dk); }
+  .flow-steps { padding: 12px 14px; }
+  .fs { display: flex; gap: 8px; padding: 7px 0; border-bottom: 1px dashed #f0f0f0; font-size: 12px; }
+  .fs:last-child { border-bottom: none; }
+  .fs-n { width: 20px; height: 20px; border-radius: 50%; background: var(--gray-bg); color: var(--gray); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 10px; flex-shrink: 0; margin-top: 1px; }
+  .fs-c { flex: 1; }
+  .fs-a { font-weight: 600; }
+  .fs-s { color: var(--gray); font-style: italic; font-size: 11.5px; margin-top: 1px; }
+  .fs-t { font-size: 10px; margin-top: 2px; }
+
+  /* Relationship diagram */
+  .rel-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 48px 0 18px; }
+  .rel-title { font-size: 16px; font-weight: 800; margin-bottom: 20px; text-align: center; }
+  .rel-diagram { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+  .rel-node { text-align: center; padding: 16px 20px; min-width: 180px; }
+  .rel-node-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 6px; }
+  .rel-node-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .rel-node-desc { font-size: 11px; color: var(--gray); max-width: 200px; margin: 0 auto; }
+  .rel-arrow { font-size: 24px; color: #cbd5e1; padding: 0 4px; }
+  .rel-arrow-label { font-size: 10px; color: var(--gray); display: block; }
+
+  /* Summary */
+  .summary { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; border-radius: 14px; padding: 28px; margin-top: 48px; }
+  .summary h2 { font-size: 17px; margin-bottom: 16px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .summary-card { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 16px; }
+  .summary-card h3 { font-size: 13px; margin-bottom: 10px; opacity: 0.8; }
+  .summary-card .count { font-size: 32px; font-weight: 800; }
+  .summary-card .items { font-size: 12px; opacity: 0.7; margin-top: 6px; line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .flow-grid { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .rel-diagram { flex-direction: column; }
+    .rel-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="w">
+
+<h1>Information Architecture v2</h1>
+<p class="sub">Non-IT Solution — Expectation Management &nbsp;|&nbsp; After the Wash × Harlem United &nbsp;|&nbsp; 2026-04-13</p>
+
+<div class="legend">
+  <div><b>Output 形式：</b></div>
+  <div><span class="tag vis">VISUAL</span> 需要視覺/空間設計</div>
+  <div><span class="tag svc">SERVICE FLOW</span> 需要設計人與人的互動流程</div>
+  <div><span class="tag copy">COPY</span> 需要撰寫文案送審</div>
+  <div><span class="tag tech">TECH</span> 需要與科技方案配合</div>
+  <div><span class="tag ft">FT</span> 融入 First-Timer 功能</div>
+</div>
+
+<!-- ==================== 03a vs 03b RELATIONSHIP ==================== -->
+<div class="rel-box">
+  <div class="rel-title">03 拆成兩個層面的關係</div>
+  <div class="rel-diagram">
+    <div class="rel-node">
+      <div class="rel-node-label" style="color:var(--purple-dk)">03a</div>
+      <div class="rel-node-name" style="color:var(--purple)">One-Sheet 視覺物件</div>
+      <div class="rel-node-desc">貼在場域內的實體參考卡<br>志工值班時「看一眼就知道」</div>
+    </div>
+    <div>
+      <div class="rel-arrow">⟵ 內容來自 ⟶</div>
+      <div class="rel-arrow-label" style="text-align:center">同樣的資訊，不同的設計產出</div>
+    </div>
+    <div class="rel-node">
+      <div class="rel-node-label" style="color:var(--teal-dk)">03b</div>
+      <div class="rel-node-name" style="color:var(--teal)">服務流程設計</div>
+      <div class="rel-node-desc">訓練用 SOP / Service Blueprint<br>志工上線前「學會怎麼做」</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:16px; font-size:12px; color:var(--gray); max-width:600px; margin-left:auto; margin-right:auto;">
+    <strong style="color:#1e293b;">關鍵差異：</strong>03a 是一個「物件」——設計重點是資訊密度、可掃視性、空間放置位置。03b 是一個「流程」——設計重點是人的行為腳本、情境判斷、訓練方式。兩者共享同一套資訊，但 output 完全不同。
+  </div>
+</div>
+
+<!-- ==================== 01 DAILY INFO BOARD ==================== -->
+<div class="sh">
+  <div class="sn c1">01</div>
+  <div><div class="st">Daily Info Board</div><div class="sd">入口/等候區的每日資訊板 ｜ 對象：所有客戶 ｜ 每日更新</div></div>
+</div>
+<div class="explain">
+  <div class="icon">📌</div>
+  <div><strong>本質：</strong>一塊讓客戶自己看的板子。所有人進來第一眼就能知道今天的狀況。設計重點是模組化（staff 每天只要翻牌/寫字）和低識字門檻。</div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th></th><th>資訊項目</th><th>具體內容</th><th>Output 形式</th><th>設計要點</th></tr></thead>
+<tbody>
+<tr>
+  <td class="id">A</td>
+  <td class="nm">今日服務狀態</td>
+  <td class="content-cell">哪些服務今天開放/關閉/異動<br><span class="note">例：淋浴 ✓ ｜ 洗衣 ✗ 維修中 ｜ 診所 10am 起</span></td>
+  <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>翻牌式模組設計 + 服務項目文字模板</td>
+  <td>需設計每日更新的最簡操作（翻牌/磁鐵/白板區）</td>
+</tr>
+<tr>
+  <td class="id">B</td>
+  <td class="nm">今日活動/公告</td>
+  <td class="content-cell">特殊活動、臨時變動<br><span class="note">例：免費理髮 2-4pm ｜ 下週一休館</span></td>
+  <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>可手寫的留白區域</td>
+  <td>白板/粉筆板區，staff 可自由書寫</td>
+</tr>
+<tr>
+  <td class="id">C</td>
+  <td class="nm">歡迎語 / 社群語句</td>
+  <td class="content-cell">每日正面肯定語、氛圍營造<br><span class="note">語氣：restorative、「家」而非「機關」</span></td>
+  <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span><br>固定印刷 or 可替換卡片</td>
+  <td>Poetic words（工作坊共識）<br>可與 Community Agreement 聯動</td>
+</tr>
+<tr class="hi">
+  <td class="id">D</td>
+  <td class="nm">基本流程圖（常駐）</td>
+  <td class="content-cell">報到 → 等待 → 被叫號 → 拿用品 → 淋浴 → 離開<br><span class="note">純圖示 + 數字，不依賴文字閱讀能力</span></td>
+  <td class="output-cell"><span class="tag vis">VISUAL</span> <span class="tag ft">FT</span><br>固定印刷海報</td>
+  <td>對 regular 是背景、對 first-timer 是核心導航<br>不需每日更新</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 02 IN-SPACE NODE SIGNAGE ==================== -->
+<div class="sh">
+  <div class="sn c2">02</div>
+  <div><div class="st">In-Space Node Signage</div><div class="sd">各空間節點的標示系統 ｜ 對象：所有客戶 ｜ 半固定</div></div>
+</div>
+<div class="explain">
+  <div class="icon">📌</div>
+  <div><strong>本質：</strong>分散在空間各處的標示。每個節點回答一個問題：「這裡可以做什麼？接下來去哪？」。設計重點是全圖示化、邀請式語氣、多語言、與空間環境整合。</div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th></th><th>資訊項目</th><th>具體內容</th><th>位置</th><th>Output 形式</th><th>設計要點</th></tr></thead>
+<tbody>
+<tr class="hi">
+  <td class="id">E</td>
+  <td class="nm">Shower Kit 取用說明</td>
+  <td>可取用物品清單<br>數量規則（邀請語氣）</td>
+  <td>Resource Table</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span></td>
+  <td>全圖示化、英/西/純圖像三版<br>「歡迎取用」非「限拿一份」</td>
+</tr>
+<tr>
+  <td class="id">F</td>
+  <td class="nm">Shower 時間提示</td>
+  <td>淋浴步驟建議<br>時間感引導（非倒數）</td>
+  <td>淋浴間內部</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag tech">TECH</span></td>
+  <td>客戶自主節奏、無壓力感<br>需與 Sheldon 計時介面協調、防水材質</td>
+</tr>
+<tr class="hi">
+  <td class="id">G</td>
+  <td class="nm">等候區導引</td>
+  <td>這裡是什麼空間<br>叫到名字後去哪</td>
+  <td>等候/用餐區</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag ft">FT</span></td>
+  <td>可能與 01 Info Board 鄰近放置<br>需現場勘查決定位置</td>
+</tr>
+<tr>
+  <td class="id">H</td>
+  <td class="nm">Community Agreement</td>
+  <td>與 regular clients 共創的公約<br>「我們一起決定的」</td>
+  <td>等候區/入口（待定）</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
+  <td>英/西/純圖像三版<br>視覺系統與 E-G 一致</td>
+</tr>
+<tr>
+  <td class="id">I</td>
+  <td class="nm">Post-Shower 指引</td>
+  <td>洗完後的下一步<br>（換衣、洗衣、離開路線）</td>
+  <td>淋浴間出口/更衣區</td>
+  <td><span class="tag vis">VISUAL</span></td>
+  <td>收尾感而非催促感</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 03a ONE-SHEET 視覺物件 ==================== -->
+<div class="sh">
+  <div class="sn c3a">03a</div>
+  <div><div class="st">One-Sheet — 視覺物件</div><div class="sd">貼在工作站的實體快速參考卡 ｜ 對象：志工/工作人員 ｜ 固定印刷</div></div>
+</div>
+<div class="explain">
+  <div class="icon">📌</div>
+  <div><strong>本質：</strong>一張（或兩張）貼在前台/後台牆上的卡片，志工在值班時<strong>掃一眼就能找到答案</strong>。不是訓練教材，是現場即時參考。設計重點是資訊層級、可掃視性（scanability）、不需翻頁。</div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th></th><th>卡片上的區塊</th><th>呈現什麼資訊</th><th>Output 形式</th><th>設計要點</th></tr></thead>
+<tbody>
+<tr class="hi">
+  <td class="id">J</td>
+  <td class="nm">叫號話術速查</td>
+  <td>標準叫號語句<br>No-show 處理（等 / 跳過 / 排回）<br><span class="note">配合 tech 系統的叫號邏輯</span></td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag tech">TECH</span></td>
+  <td>DO / SAY 兩欄格式<br>放在前台工作站旁</td>
+</tr>
+<tr class="hi">
+  <td class="id">K</td>
+  <td class="nm">First-Timer 速查</td>
+  <td>看到 FT tag 後只需講的三件事<br><span class="note">「零食在那、會叫你名字、用品在那桌」</span></td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span> <span class="tag tech">TECH</span></td>
+  <td>醒目標示、放在前台最顯眼位置<br>三句話就夠，其餘交給 signage</td>
+</tr>
+<tr>
+  <td class="id">L</td>
+  <td class="nm">等候互動速查</td>
+  <td>「還要等多久？」的回答範本<br>何時主動關心 vs. 不打擾</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
+  <td>DO / SAY / DON'T 三欄<br>放在等候區志工站旁</td>
+</tr>
+<tr>
+  <td class="id">M</td>
+  <td class="nm">Non-Visible Needs 提示</td>
+  <td>觀察信號提示<br>何時轉介、找誰</td>
+  <td><span class="tag vis">VISUAL</span> <span class="tag copy">COPY</span></td>
+  <td>不貼標籤的語言<br>轉介聯絡人（Richard）標示清楚</td>
+</tr>
+<tr>
+  <td class="id">N</td>
+  <td class="nm">Timing 時間軸</td>
+  <td>沿著客戶旅程的介入/退後時機<br><span class="note">報到→等候→叫號→用品→淋浴→離開</span></td>
+  <td><span class="tag vis">VISUAL</span></td>
+  <td>橫向時間軸<br>標示「介入」和「退後」的節點</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== 03b SERVICE FLOW ==================== -->
+<div class="sh">
+  <div class="sn c3b">03b</div>
+  <div><div class="st">服務流程設計</div><div class="sd">志工訓練用 SOP / Service Blueprint ｜ 對象：新志工 + 訓練者 ｜ 訓練時使用</div></div>
+</div>
+<div class="explain">
+  <div class="icon">📌</div>
+  <div><strong>本質：</strong>不是貼在牆上的東西，是<strong>設計「人怎麼行動」的流程</strong>。回答的是：志工從到場到離場，面對不同客戶類型，每個時刻該做什麼、說什麼、不做什麼。設計重點是情境腳本化、可演練、可納入現有訓練流程。</div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th></th><th>流程設計項目</th><th>設計什麼</th><th>Output 形式</th><th>設計要點</th></tr></thead>
+<tbody>
+<tr>
+  <td class="id">O</td>
+  <td class="nm">三種客戶情境 SOP</td>
+  <td>Regular / First-Timer / Non-Visible Needs<br>每種情境從報到到離場的完整行為腳本</td>
+  <td><span class="tag svc">SERVICE FLOW</span> <span class="tag copy">COPY</span> <span class="tag ft">FT</span></td>
+  <td>情境式設計（非線性清單）<br>包含口語話術範例<br>見下方流程圖</td>
+</tr>
+<tr>
+  <td class="id">P</td>
+  <td class="nm">Timing Intervention 判斷邏輯</td>
+  <td>什麼時候介入（主動提醒/關心/引導）<br>什麼時候退後（讓客戶自主）<br>Framing: 「創造修復時刻」非「管理流程」</td>
+  <td><span class="tag svc">SERVICE FLOW</span> <span class="tag vis">VISUAL</span></td>
+  <td>決策樹 or if/then 邏輯圖<br>需要 Richard 的現場經驗驗證</td>
+</tr>
+<tr>
+  <td class="id">Q</td>
+  <td class="nm">志工訓練 Walkthrough</td>
+  <td>新志工第一天怎麼學？<br>帶著走一遍空間 → 講解 One-Sheet → 跟班觀察 → 獨立值班</td>
+  <td><span class="tag svc">SERVICE FLOW</span> <span class="tag vis">VISUAL</span></td>
+  <td>訓練 SOP 流程圖<br>哪些是「必學」、哪些是「看情境」<br>納入 Richard 現有訓練模式</td>
+</tr>
+<tr>
+  <td class="id">R</td>
+  <td class="nm">例外情境處理</td>
+  <td>客戶 no-show 後回來怎麼辦？<br>情緒激動時的 de-escalation<br>超時佔用淋浴間</td>
+  <td><span class="tag svc">SERVICE FLOW</span> <span class="tag copy">COPY</span> <span class="tag tech">TECH</span></td>
+  <td>需要 HU 提供現有 protocol<br>話術要 de-escalation 導向<br>部分需與 tech 系統配合</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- 03b SERVICE FLOW DETAIL -->
+<div class="flow-box">
+  <div class="flow-title">O. 三種客戶情境的服務流程</div>
+  <div class="flow-grid">
+
+    <div class="flow-col">
+      <div class="flow-col-h a">Regular Client 固定客戶</div>
+      <div class="flow-steps">
+        <div class="fs"><div class="fs-n">1</div><div class="fs-c"><div class="fs-a">報到：叫名字打招呼</div><div class="fs-s">"Hey [name], good to see you"</div></div></div>
+        <div class="fs"><div class="fs-n">2</div><div class="fs-c"><div class="fs-a">等候：不需主動引導</div><div class="fs-s">他們知道流程 → 退後</div></div></div>
+        <div class="fs"><div class="fs-n">3</div><div class="fs-c"><div class="fs-a">叫號：標準話術</div><div class="fs-s">"[Name], shower [#] is ready"</div></div></div>
+        <div class="fs"><div class="fs-n">4</div><div class="fs-c"><div class="fs-a">淋浴中：不介入</div><div class="fs-s">除非超時，由 tech 提示</div></div></div>
+        <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">離開：自然道別</div><div class="fs-s">不需額外引導</div></div></div>
+      </div>
+    </div>
+
+    <div class="flow-col">
+      <div class="flow-col-h b">First-Timer 第一次來 <span class="tag ft" style="margin-left:4px">FT</span></div>
+      <div class="flow-steps">
+        <div class="fs"><div class="fs-n">1</div><div class="fs-c"><div class="fs-a">報到：系統顯示 FT tag</div><div class="fs-t"><span class="tag tech">TECH</span> 前台辨識</div></div></div>
+        <div class="fs"><div class="fs-n">2</div><div class="fs-c"><div class="fs-a">只講三件事</div><div class="fs-s">"零食在那、我們會叫你、用品在那桌"</div><div class="fs-t">其餘交給空間標示</div></div></div>
+        <div class="fs"><div class="fs-n">3</div><div class="fs-c"><div class="fs-a">叫號：多一句引導</div><div class="fs-s">"跟我來，我帶你去拿用品"</div></div></div>
+        <div class="fs"><div class="fs-n">4</div><div class="fs-c"><div class="fs-a">用品區：指一下標示</div><div class="fs-s">"這邊都可以拿，上面有說明"</div><div class="fs-t">Signage 接手 → 志工退後</div></div></div>
+        <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">離開：溫暖收尾</div><div class="fs-s">"下次來不用擔心，你已經知道了"</div></div></div>
+      </div>
+    </div>
+
+    <div class="flow-col">
+      <div class="flow-col-h c">Non-Visible Needs 非顯性需求</div>
+      <div class="flow-steps">
+        <div class="fs"><div class="fs-n">1</div><div class="fs-c"><div class="fs-a">觀察：不主動詢問</div><div class="fs-s">注意行為信號，不判斷</div></div></div>
+        <div class="fs"><div class="fs-n">2</div><div class="fs-c"><div class="fs-a">提供選擇非指令</div><div class="fs-s">"需要什麼跟我說就好"</div></div></div>
+        <div class="fs"><div class="fs-n">3</div><div class="fs-c"><div class="fs-a">判斷轉介時機</div><div class="fs-s">依 HU 內部 protocol</div><div class="fs-t">需 HU 提供判斷標準</div></div></div>
+        <div class="fs"><div class="fs-n">4</div><div class="fs-c"><div class="fs-a">通知正職人員</div><div class="fs-s">告知 Richard 或值班主管</div></div></div>
+        <div class="fs"><div class="fs-n">5</div><div class="fs-c"><div class="fs-a">持續照常服務</div><div class="fs-s">不改變對待方式</div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== MEGA MATRIX ==================== -->
+<div class="sh" style="margin-top:56px">
+  <div><div class="st">完整總覽：A-R 所有資訊 × 載體 × Output</div></div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>資訊項目</th>
+  <th>落在哪</th>
+  <th style="text-align:center">VISUAL<br><span style="font-weight:400;font-size:10px;text-transform:none">視覺物件</span></th>
+  <th style="text-align:center">SERVICE<br><span style="font-weight:400;font-size:10px;text-transform:none">服務流程</span></th>
+  <th style="text-align:center">COPY<br><span style="font-weight:400;font-size:10px;text-transform:none">文案</span></th>
+  <th style="text-align:center">TECH<br><span style="font-weight:400;font-size:10px;text-transform:none">科技配合</span></th>
+  <th style="text-align:center">FT<br><span style="font-weight:400;font-size:10px;text-transform:none">First-Timer</span></th>
+</tr>
+</thead>
+<tbody>
+<tr><td class="id">A</td><td class="nm">今日服務狀態</td><td><span class="carrier c1">01 Board</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">B</td><td class="nm">今日活動/公告</td><td><span class="carrier c1">01 Board</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">C</td><td class="nm">歡迎語/社群語句</td><td><span class="carrier c1">01 Board</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr class="hi"><td class="id">D</td><td class="nm">基本流程圖</td><td><span class="carrier c1">01 Board</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--rose)">●</td></tr>
+<tr class="hi"><td class="id">E</td><td class="nm">Shower Kit 取用</td><td><span class="carrier c2">02 Signage</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--rose)">●</td></tr>
+<tr><td class="id">F</td><td class="nm">Shower 時間提示</td><td><span class="carrier c2">02 Signage</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--amber)">●</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr class="hi"><td class="id">G</td><td class="nm">等候區導引</td><td><span class="carrier c2">02 Signage</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--rose)">●</td></tr>
+<tr><td class="id">H</td><td class="nm">Community Agreement</td><td><span class="carrier c2">02 Signage</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">I</td><td class="nm">Post-Shower 指引</td><td><span class="carrier c2">02 Signage</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">J</td><td class="nm">叫號話術速查</td><td><span class="carrier c3a">03a Sheet</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:var(--amber)">●</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr class="hi"><td class="id">K</td><td class="nm">First-Timer 速查</td><td><span class="carrier c3a">03a Sheet</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:var(--amber)">●</td><td style="text-align:center;color:var(--rose)">●</td></tr>
+<tr><td class="id">L</td><td class="nm">等候互動速查</td><td><span class="carrier c3a">03a Sheet</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">M</td><td class="nm">Non-Visible Needs</td><td><span class="carrier c3a">03a Sheet</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">N</td><td class="nm">Timing 時間軸</td><td><span class="carrier c3a">03a Sheet</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">O</td><td class="nm">三種情境 SOP</td><td><span class="carrier c3b">03b Flow</span></td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--purple)">●</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--rose)">●</td></tr>
+<tr><td class="id">P</td><td class="nm">Timing 判斷邏輯</td><td><span class="carrier c3b">03b Flow</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:var(--purple)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">Q</td><td class="nm">志工訓練 Walkthrough</td><td><span class="carrier c3b">03b Flow</span></td><td style="text-align:center;color:var(--blue)">●</td><td style="text-align:center;color:var(--purple)">●</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:#ddd">—</td></tr>
+<tr><td class="id">R</td><td class="nm">例外情境處理</td><td><span class="carrier c3b">03b Flow</span></td><td style="text-align:center;color:#ddd">—</td><td style="text-align:center;color:var(--purple)">●</td><td style="text-align:center;color:var(--green)">●</td><td style="text-align:center;color:var(--amber)">●</td><td style="text-align:center;color:#ddd">—</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="summary">
+  <h2>Output 統計 — 四個載體各需要什麼</h2>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3><span class="carrier c1" style="font-size:12px">01</span> Daily Info Board</h3>
+      <div class="count">4 項 (A-D)</div>
+      <div class="items">全部是 <span class="tag vis">VISUAL</span>，3 項需要 <span class="tag copy">COPY</span><br>Amber 寫文案 → Richard 審 → 你們做版面設計<br>重點：模組化更新機制、低識字門檻</div>
+    </div>
+    <div class="summary-card">
+      <h3><span class="carrier c2" style="font-size:12px">02</span> In-Space Node Signage</h3>
+      <div class="count">5 項 (E-I)</div>
+      <div class="items">全部是 <span class="tag vis">VISUAL</span>，2 項需要 <span class="tag copy">COPY</span>，1 項配合 <span class="tag tech">TECH</span><br>重點：全圖示化、邀請語氣、多語言、需現場勘查位置</div>
+    </div>
+    <div class="summary-card">
+      <h3><span class="carrier c3a" style="font-size:12px">03a</span> One-Sheet 視覺物件</h3>
+      <div class="count">5 項 (J-N)</div>
+      <div class="items">全部是 <span class="tag vis">VISUAL</span>，4 項需要 <span class="tag copy">COPY</span><br>重點：掃一眼就找到答案、放在工作站旁<br>是 03b 的「濃縮版」</div>
+    </div>
+    <div class="summary-card">
+      <h3><span class="carrier c3b" style="font-size:12px">03b</span> 服務流程設計</h3>
+      <div class="count">4 項 (O-R)</div>
+      <div class="items">全部是 <span class="tag svc">SERVICE FLOW</span><br>重點：情境腳本化、可演練、納入 Richard 現有訓練流程<br>是 03a 的「展開版」+ 訓練邏輯</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
