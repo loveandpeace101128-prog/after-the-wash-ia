@@ -188,6 +188,32 @@
   table.mega td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
   table.mega tr:last-child td { border-bottom: none; }
 
+  /* ===== MIND MAP ===== */
+  .mm-container { position: relative; width: 100%; min-height: 750px; background: #fdfdfe; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+  .mm-svg { width: 100%; height: 100%; }
+  .mm-controls { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .mm-ctrl-btn { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--dark); transition: all 0.15s; }
+  .mm-ctrl-btn:hover { background: var(--gray-bg); }
+  .mm-ctrl-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+  .mm-hint { font-size: 11px; color: #94a3b8; margin-left: auto; }
+  .mm-legend-bar { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; margin-top: 16px; padding: 12px 18px; background: var(--gray-bg); border-radius: 10px; color: var(--gray); }
+  .mm-legend-bar .tag { margin-right: 2px; }
+
+  /* Detail Panel */
+  .mm-detail { position: absolute; top: 16px; right: 16px; width: 280px; background: white; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(0,0,0,0.08); padding: 0; z-index: 10; display: none; overflow: hidden; transition: opacity 0.2s; }
+  .mm-detail.show { display: block; }
+  .mm-detail-head { padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f0; }
+  .mm-detail-id { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; flex-shrink: 0; }
+  .mm-detail-name { font-weight: 700; font-size: 15px; }
+  .mm-detail-carrier { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: auto; }
+  .mm-detail-body { padding: 12px 16px; font-size: 12px; }
+  .mm-detail-row { display: grid; grid-template-columns: 72px 1fr; gap: 4px; padding: 4px 0; border-bottom: 1px dashed #f5f5f5; }
+  .mm-detail-row:last-child { border-bottom: none; }
+  .mm-detail-label { font-weight: 700; color: var(--gray); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .mm-detail-val { color: #334155; }
+  .mm-detail-close { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; line-height: 1; }
+  .mm-detail-close:hover { color: var(--dark); }
+
   /* ===== FOOTER ===== */
   .page-footer { text-align: center; padding: 32px 20px; font-size: 11px; color: #94a3b8; border-top: 1px solid var(--border); margin-top: 48px; }
 
@@ -215,6 +241,7 @@
       <button class="tab-btn active" onclick="switchTab('ia')"><span class="tab-num">1</span>Information Architecture</button>
       <button class="tab-btn" onclick="switchTab('tp')"><span class="tab-num">2</span>Touchpoint Matrix</button>
       <button class="tab-btn" onclick="switchTab('cm')"><span class="tab-num">3</span>Content Model</button>
+      <button class="tab-btn" onclick="switchTab('mm')"><span class="tab-num">4</span>Mind Map</button>
     </div>
   </div>
 </div>
@@ -996,6 +1023,47 @@
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!-- TAB 4: MIND MAP                                              -->
+<!-- ============================================================ -->
+<div id="tab-mm" class="tab-content">
+<div class="w">
+
+<div class="section-label">Overview</div>
+<div class="section-title">Information Architecture Mind Map</div>
+<div class="section-desc">以視覺化方式呈現整體資訊架構的層級關係：核心策略 → 載體 → 資訊項目 → Output 類型</div>
+
+<div class="mm-controls">
+  <button class="mm-ctrl-btn active" onclick="setView('all')">All</button>
+  <button class="mm-ctrl-btn" onclick="setView('01')">01 Info Board</button>
+  <button class="mm-ctrl-btn" onclick="setView('02')">02 Signage</button>
+  <button class="mm-ctrl-btn" onclick="setView('03a')">03a One-Sheet</button>
+  <button class="mm-ctrl-btn" onclick="setView('03b')">03b Service Flow</button>
+  <span class="mm-hint">點擊載體節點可收合/展開 ｜ 點擊資訊項目可查看規格卡</span>
+</div>
+
+<div class="mm-container" id="mm-container">
+  <svg id="mm-svg" class="mm-svg"></svg>
+  <!-- Detail panel -->
+  <div class="mm-detail" id="mm-detail">
+    <button class="mm-detail-close" onclick="closeDetail()">&times;</button>
+    <div class="mm-detail-head" id="mm-detail-head"></div>
+    <div class="mm-detail-body" id="mm-detail-body"></div>
+  </div>
+</div>
+
+<div class="mm-legend-bar">
+  <div><span class="tag vis">VISUAL</span> 視覺設計</div>
+  <div><span class="tag svc">SERVICE FLOW</span> 服務流程</div>
+  <div><span class="tag copy">COPY</span> 文案</div>
+  <div><span class="tag tech">TECH</span> 科技配合</div>
+  <div><span class="tag ft">FT</span> First-Timer</div>
+  <div style="margin-left:auto; opacity:0.6">點擊載體按鈕可篩選 ｜ 黃色高亮 = 含 FT 功能</div>
+</div>
+
+</div>
+</div>
+
 <!-- ===== FOOTER ===== -->
 <div class="page-footer">
   After the Wash × Harlem United — Parsons MS SDM Capstone Spring 2026 &nbsp;|&nbsp; Non-IT Solution Design System &nbsp;|&nbsp; Last updated: 2026-04-13
@@ -1003,20 +1071,300 @@
 
 <script>
 function switchTab(tab) {
-  // Hide all tabs
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-  // Show selected tab
   document.getElementById('tab-' + tab).classList.add('active');
-
-  // Activate button
-  const map = { ia: 0, tp: 1, cm: 2 };
+  const map = { ia: 0, tp: 1, cm: 2, mm: 3 };
   document.querySelectorAll('.tab-btn')[map[tab]].classList.add('active');
-
-  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (tab === 'mm') setTimeout(renderMindMap, 50);
 }
+
+/* ===== MIND MAP DATA ===== */
+const mmData = {
+  carriers: [
+    { id: '01', label: '01 Info Board', sub: '入口/等候區｜每日更新', color: '#0ea5e9', bg: '#e0f2fe',
+      items: [
+        { id: 'A', label: '今日服務狀態', tags: ['vis','copy'], ft: false, desc: '哪些服務今天開放/關閉/異動', example: '淋浴 ✓ ｜ 洗衣 ✗ 維修中', audience: '所有客戶', stage: '① Entrance', freq: '每日', literacy: '低 — 圖示為主', maintainer: 'HU 工作人員', note: '翻牌/磁鐵模組，30 秒完成更新' },
+        { id: 'B', label: '今日活動/公告', tags: ['vis','copy'], ft: false, desc: '特殊活動、臨時變動', example: '免費理髮 2-4pm', audience: '所有客戶', stage: '① Entrance', freq: '每日', literacy: '中', maintainer: 'HU 工作人員', note: '白板/粉筆板，staff 自由書寫' },
+        { id: 'C', label: '歡迎語/社群語句', tags: ['vis','copy'], ft: false, desc: '正面肯定語、restorative 氛圍', example: 'Poetic words', audience: '所有客戶', stage: '① Entrance', freq: '固定/週更', literacy: '中', maintainer: 'Parsons → HU 審核', note: '像「家」不像「機關」' },
+        { id: 'D', label: '基本流程圖', tags: ['vis'], ft: true, desc: '報到→等待→叫號→拿用品→淋浴→離開', example: '純圖示+數字流程', audience: 'First-Timer 為主', stage: '① Entrance', freq: '固定印刷', literacy: '無 — 完全視覺化', maintainer: 'Parsons 設計', note: '對應平面圖 ①-⑥ 編號' }
+      ]},
+    { id: '02', label: '02 Signage', sub: '各空間節點｜半固定', color: '#10b981', bg: '#d1fae5',
+      items: [
+        { id: 'E', label: 'Shower Kit 取用', tags: ['vis','copy'], ft: true, desc: '可取用物品清單、數量規則', example: '毛巾 ×1 / 肥皂 ×1 — 歡迎取用', audience: '淋浴客戶（含 FT）', stage: '④ Shower Kits', freq: '半固定', literacy: '無 — 圖示版', maintainer: 'Parsons → HU 審核', note: '「歡迎取用」非「限拿一份」' },
+        { id: 'F', label: 'Shower 時間提示', tags: ['vis','tech'], ft: false, desc: '淋浴步驟建議與時間感引導', example: 'Warm rinse → Hair → Body → Rinse', audience: '淋浴客戶', stage: '⑤ Shower', freq: '固定', literacy: '低', maintainer: 'Parsons + Sheldon', note: '自主節奏、非倒數、防水材質' },
+        { id: 'G', label: '等候區導引', tags: ['vis'], ft: true, desc: '這個空間是什麼、叫號後去哪', example: '圖示指引', audience: '所有客戶（主要 FT）', stage: '②③ Waiting', freq: '固定', literacy: '無', maintainer: 'Parsons 設計', note: '可能與 01 Board 鄰近放置' },
+        { id: 'H', label: 'Community Agreement', tags: ['vis','copy'], ft: false, desc: '與 regular clients 共創的公約', example: '「我們一起決定的」', audience: '所有客戶', stage: '① Entrance', freq: '固定', literacy: '低', maintainer: 'HU 共創 → Parsons', note: '需先設計共創流程' },
+        { id: 'I', label: 'Post-Shower 指引', tags: ['vis'], ft: false, desc: '洗完後下一步：歸還、換衣、離開', example: '圖示指引', audience: '淋浴客戶', stage: '⑥ Exit', freq: '固定', literacy: '低', maintainer: 'Parsons 設計', note: '收尾感、非催促感' }
+      ]},
+    { id: '03a', label: '03a One-Sheet', sub: '志工速查卡｜固定印刷', color: '#8b5cf6', bg: '#ede9fe',
+      items: [
+        { id: 'J', label: '叫號話術速查', tags: ['vis','copy','tech'], ft: false, desc: '標準叫號語句 + no-show 規則', example: '"[Name], shower [#] is ready"', audience: '前台+後台志工', stage: 'Registration', freq: '固定', literacy: '—', maintainer: 'Parsons → HU', note: 'DO/SAY 兩欄，配合系統' },
+        { id: 'K', label: 'First-Timer 速查', tags: ['vis','copy','tech'], ft: true, desc: '看到 FT tag → 只講三件事', example: '零食在那、會叫你、用品在那桌', audience: '前台志工', stage: 'Registration', freq: '固定', literacy: '—', maintainer: 'Parsons → HU', note: 'One-Sheet 最醒目位置' },
+        { id: 'L', label: '等候互動速查', tags: ['vis','copy'], ft: false, desc: '回答等待問題 + 關心 vs. 不打擾', example: 'DO: 查系統回答 / DON\'T: 猜', audience: '等候區志工', stage: '②③ Waiting', freq: '固定', literacy: '—', maintainer: 'Parsons → HU', note: 'DO/SAY/DON\'T 三欄' },
+        { id: 'M', label: 'Non-Visible Needs', tags: ['vis','copy'], ft: false, desc: '觀察信號 + 轉介時機 + 找誰', example: '觀察清單', audience: '所有志工', stage: '全程', freq: '固定', literacy: '—', maintainer: 'HU protocol → Parsons', note: '轉介聯絡人 Richard' },
+        { id: 'N', label: 'Timing 時間軸', tags: ['vis'], ft: false, desc: '沿旅程標示介入/退後時機', example: '橫向時間軸', audience: '所有志工', stage: '全程 ①-⑥', freq: '固定', literacy: '—', maintainer: 'Parsons → Richard', note: '是 03b P 的濃縮版' }
+      ]},
+    { id: '03b', label: '03b Service Flow', sub: '訓練用 SOP｜情境腳本', color: '#14b8a6', bg: '#ccfbf1',
+      items: [
+        { id: 'O', label: '三種情境 SOP', tags: ['svc','copy'], ft: true, desc: 'Regular / FT / NVN 完整行為腳本', example: '情境式設計，含口語話術', audience: '新志工+訓練者', stage: '全程 ①-⑥', freq: '需要時', literacy: '—', maintainer: 'Parsons → Richard', note: '情境式、可演練' },
+        { id: 'P', label: 'Timing 判斷邏輯', tags: ['svc','vis'], ft: false, desc: '什麼時候介入 / 退後的決策邏輯', example: '決策樹 if/then', audience: '志工', stage: '全程', freq: '需要時', literacy: '—', maintainer: 'Parsons → Richard', note: '「創造修復時刻」非「管理流程」' },
+        { id: 'Q', label: '志工訓練 Walkthrough', tags: ['svc','vis'], ft: false, desc: '走空間→講解→跟班→獨立', example: '訓練流程圖', audience: '新志工+Richard', stage: '全程 ①-⑥', freq: '需要時', literacy: '—', maintainer: 'Parsons → HU', note: 'One-Sheet = 訓練教材（雙重用途）' },
+        { id: 'R', label: '例外情境處理', tags: ['svc','copy','tech'], ft: false, desc: 'No-show / 情緒激動 / 超時', example: 'de-escalation 話術', audience: '所有志工', stage: 'Reg/Wait/Shower', freq: '需要時', literacy: '—', maintainer: 'HU protocol → Parsons', note: '需與 Sheldon 系統配合' }
+      ]}
+  ]
+};
+
+const tagColors = {
+  vis:  { bg: '#e0f2fe', text: '#0369a1', label: 'VIS' },
+  svc:  { bg: '#ede9fe', text: '#5b21b6', label: 'SVC' },
+  copy: { bg: '#d1fae5', text: '#065f46', label: 'COPY' },
+  tech: { bg: '#fef3c7', text: '#92400e', label: 'TECH' },
+  ft:   { bg: '#ffe4e6', text: '#9f1239', label: 'FT' }
+};
+
+let currentView = 'all';
+let collapsedCarriers = {};
+let selectedItem = null;
+
+function setView(v) {
+  currentView = v;
+  collapsedCarriers = {};
+  closeDetail();
+  document.querySelectorAll('.mm-ctrl-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderMindMap();
+}
+
+function toggleCarrier(id) {
+  collapsedCarriers[id] = !collapsedCarriers[id];
+  renderMindMap();
+}
+
+function showDetail(carrierId, itemId) {
+  const carrier = mmData.carriers.find(c => c.id === carrierId);
+  const item = carrier.items.find(i => i.id === itemId);
+  if (!item) return;
+  selectedItem = itemId;
+
+  const head = document.getElementById('mm-detail-head');
+  const body = document.getElementById('mm-detail-body');
+  const carrierCls = { '01': 'cc1', '02': 'cc2', '03a': 'cc3a', '03b': 'cc3b' }[carrierId];
+  const idCls = { '01': 'c1', '02': 'c2', '03a': 'c3a', '03b': 'c3b' }[carrierId];
+
+  head.innerHTML = `<div class="cm-id ${idCls}">${item.id}</div><div class="mm-detail-name">${item.label}</div><div class="cm-carrier ${carrierCls}">${carrier.label}</div>`;
+
+  const allTags = item.ft ? [...item.tags, 'ft'] : item.tags;
+  const tagsHtml = allTags.map(t => `<span class="tag ${t}">${tagColors[t].label}</span>`).join(' ');
+
+  const rows = [
+    ['內容描述', item.desc],
+    ['內容範例', item.example],
+    ['受眾', item.audience],
+    ['旅程階段', item.stage],
+    ['更新頻率', item.freq],
+    ['識字門檻', item.literacy],
+    ['Output', tagsHtml],
+    ['維護者', item.maintainer],
+    ['設計要點', item.note]
+  ];
+  body.innerHTML = rows.map(([l,v]) => `<div class="mm-detail-row"><div class="mm-detail-label">${l}</div><div class="mm-detail-val">${v}</div></div>`).join('');
+
+  document.getElementById('mm-detail').classList.add('show');
+  renderMindMap(); // re-render to highlight
+}
+
+function closeDetail() {
+  selectedItem = null;
+  document.getElementById('mm-detail').classList.remove('show');
+  renderMindMap();
+}
+
+function renderMindMap() {
+  const container = document.getElementById('mm-container');
+  const svg = document.getElementById('mm-svg');
+  const W = container.clientWidth;
+  const H = Math.max(750, window.innerHeight - 260);
+  container.style.height = H + 'px';
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.innerHTML = '';
+
+  // Defs for glow filter
+  const defs = el('defs');
+  const filter = el('filter', { id: 'glow', x: '-20%', y: '-20%', width: '140%', height: '140%' });
+  const blur = el('feGaussianBlur', { stdDeviation: '3', result: 'coloredBlur' });
+  const merge = el('feMerge');
+  merge.append(el('feMergeNode', { in: 'coloredBlur' }));
+  merge.append(el('feMergeNode', { in: 'SourceGraphic' }));
+  filter.append(blur, merge);
+  defs.append(filter);
+  svg.append(defs);
+
+  const cx = W / 2, cy = H / 2;
+  let carriers = mmData.carriers;
+  if (currentView !== 'all') carriers = carriers.filter(c => c.id === currentView);
+
+  const cCount = carriers.length;
+  const angleStep = (Math.PI * 2) / Math.max(cCount, 1);
+  const startAngle = -Math.PI / 2;
+  const carrierRadius = cCount === 1 ? 0 : Math.min(190, W / 5.5);
+  const itemRadius = cCount === 1 ? Math.min(270, W / 4.2) : Math.min(210, W / 4.8);
+
+  const linesG = el('g');
+  const nodesG = el('g');
+
+  // Center node
+  const cg = el('g');
+  cg.style.cursor = 'default';
+  cg.append(el('rect', { x: cx-130, y: cy-36, width: 260, height: 72, rx: 16, fill: '#0f172a' }));
+  cg.append(el('text', { x: cx, y: cy-6, fill: 'white', 'font-size': 16, 'font-weight': 800, 'text-anchor': 'middle' }, 'Non-IT Solution'));
+  cg.append(el('text', { x: cx, y: cy+14, fill: 'rgba(255,255,255,0.45)', 'font-size': 10, 'text-anchor': 'middle' }, 'Expectation Management'));
+  cg.append(el('text', { x: cx, y: cy+26, fill: 'rgba(255,255,255,0.3)', 'font-size': 9, 'text-anchor': 'middle' }, 'Training Consistency × Rule Transparency'));
+  nodesG.append(cg);
+
+  carriers.forEach((carrier, ci) => {
+    const angle = cCount === 1 ? -Math.PI/2 : startAngle + ci * angleStep;
+    const ccx = cx + Math.cos(angle) * carrierRadius;
+    const ccy = cy + Math.sin(angle) * carrierRadius;
+    const isCollapsed = collapsedCarriers[carrier.id];
+
+    // Line center → carrier
+    if (cCount > 1) {
+      const line = el('line', { x1: cx, y1: cy, x2: ccx, y2: ccy, stroke: carrier.color, 'stroke-width': 3, 'stroke-opacity': 0.2 });
+      linesG.append(line);
+    }
+
+    // Carrier node
+    const cw = 160, ch = 56;
+    const carrierG = el('g');
+    carrierG.style.cursor = 'pointer';
+    carrierG.addEventListener('click', (e) => { e.stopPropagation(); toggleCarrier(carrier.id); });
+
+    // Carrier background with hover effect
+    const carrierBg = el('rect', { x: ccx-cw/2, y: ccy-ch/2, width: cw, height: ch, rx: 14, fill: carrier.bg, stroke: carrier.color, 'stroke-width': 2.5 });
+    carrierG.append(carrierBg);
+
+    // Carrier label
+    carrierG.append(el('text', { x: ccx, y: ccy-8, fill: carrier.color, 'font-size': 14, 'font-weight': 800, 'text-anchor': 'middle' }, carrier.label));
+    carrierG.append(el('text', { x: ccx, y: ccy+8, fill: carrier.color, 'font-size': 9, 'text-anchor': 'middle', opacity: 0.6 }, carrier.sub.split('｜')[0]));
+
+    // Collapse/expand indicator
+    const indicatorText = isCollapsed ? `▶ ${carrier.items.length} items` : '▼ 點擊收合';
+    carrierG.append(el('text', { x: ccx, y: ccy+22, fill: carrier.color, 'font-size': 8, 'text-anchor': 'middle', opacity: 0.4 }, indicatorText));
+
+    // Hover effects
+    carrierG.addEventListener('mouseenter', () => { carrierBg.setAttribute('stroke-width', '3.5'); carrierBg.setAttribute('filter', 'url(#glow)'); });
+    carrierG.addEventListener('mouseleave', () => { carrierBg.setAttribute('stroke-width', '2.5'); carrierBg.removeAttribute('filter'); });
+
+    nodesG.append(carrierG);
+
+    // Items (only if not collapsed)
+    if (!isCollapsed) {
+      const items = carrier.items;
+      const iCount = items.length;
+      const spreadAngle = cCount === 1 ? Math.PI * 2 : Math.min(Math.PI * 0.85, iCount * 0.38);
+      const iStartAngle = cCount === 1 ? -Math.PI/2 : angle - spreadAngle/2;
+      const iStep = iCount <= 1 ? 0 : (cCount === 1 ? Math.PI*2/iCount : spreadAngle/(iCount-1));
+
+      items.forEach((item, ii) => {
+        const ia = iStartAngle + ii * iStep;
+        const ix = ccx + Math.cos(ia) * itemRadius;
+        const iy = ccy + Math.sin(ia) * itemRadius;
+
+        // Line carrier → item
+        const itemLine = el('line', { x1: ccx, y1: ccy, x2: ix, y2: iy, stroke: carrier.color, 'stroke-width': 1.5, 'stroke-opacity': 0.12 });
+        if (!item.ft) itemLine.setAttribute('stroke-dasharray', '4,3');
+        linesG.append(itemLine);
+
+        // Item node
+        const iw = 140, ih = 56;
+        const ig = el('g');
+        ig.style.cursor = 'pointer';
+        ig.addEventListener('click', (e) => { e.stopPropagation(); showDetail(carrier.id, item.id); });
+
+        const isSelected = selectedItem === item.id;
+        const bgFill = isSelected ? carrier.bg : (item.ft ? '#fffbeb' : 'white');
+        const strokeColor = isSelected ? carrier.color : (item.ft ? '#f59e0b' : '#e2e8f0');
+        const strokeW = isSelected ? 3 : (item.ft ? 2 : 1);
+
+        const itemBg = el('rect', { x: ix-iw/2, y: iy-ih/2, width: iw, height: ih, rx: 11, fill: bgFill, stroke: strokeColor, 'stroke-width': strokeW });
+        if (isSelected) itemBg.setAttribute('filter', 'url(#glow)');
+        ig.append(itemBg);
+
+        // ID circle
+        ig.append(el('circle', { cx: ix-iw/2+16, cy: iy-10, r: 11, fill: carrier.color }));
+        ig.append(el('text', { x: ix-iw/2+16, y: iy-6, fill: 'white', 'font-size': 11, 'font-weight': 800, 'text-anchor': 'middle' }, item.id));
+
+        // Label
+        const maxLen = 11;
+        const labelText = item.label.length > maxLen ? item.label.substring(0, maxLen) + '…' : item.label;
+        ig.append(el('text', { x: ix-iw/2+32, y: iy-6, fill: '#1e293b', 'font-size': 11.5, 'font-weight': 700 }, labelText));
+
+        // Tags
+        let tx = ix - iw/2 + 8;
+        const ty = iy + 12;
+        const allTags = item.ft ? [...item.tags, 'ft'] : item.tags;
+        allTags.forEach(tag => {
+          const tc = tagColors[tag];
+          const tw = tc.label.length * 5.5 + 10;
+          ig.append(el('rect', { x: tx, y: ty-8, width: tw, height: 15, rx: 3, fill: tc.bg }));
+          ig.append(el('text', { x: tx+tw/2, y: ty+3, fill: tc.text, 'font-size': 8, 'font-weight': 700, 'text-anchor': 'middle' }, tc.label));
+          tx += tw + 3;
+        });
+
+        // Hover
+        ig.addEventListener('mouseenter', () => {
+          if (!isSelected) { itemBg.setAttribute('stroke', carrier.color); itemBg.setAttribute('stroke-width', '2'); }
+          itemLine.setAttribute('stroke-opacity', '0.5');
+          itemLine.setAttribute('stroke-width', '2.5');
+        });
+        ig.addEventListener('mouseleave', () => {
+          if (!isSelected) { itemBg.setAttribute('stroke', item.ft ? '#f59e0b' : '#e2e8f0'); itemBg.setAttribute('stroke-width', item.ft ? '2' : '1'); }
+          itemLine.setAttribute('stroke-opacity', '0.12');
+          itemLine.setAttribute('stroke-width', '1.5');
+        });
+
+        nodesG.append(ig);
+      });
+    }
+  });
+
+  // 03a ↔ 03b relationship
+  if (currentView === 'all') {
+    const a3aIdx = carriers.findIndex(c => c.id === '03a');
+    const a3bIdx = carriers.findIndex(c => c.id === '03b');
+    if (a3aIdx >= 0 && a3bIdx >= 0) {
+      const a1 = startAngle + a3aIdx * angleStep;
+      const a2 = startAngle + a3bIdx * angleStep;
+      const x1 = cx + Math.cos(a1) * carrierRadius;
+      const y1 = cy + Math.sin(a1) * carrierRadius;
+      const x2 = cx + Math.cos(a2) * carrierRadius;
+      const y2 = cy + Math.sin(a2) * carrierRadius;
+      const midX = (x1+x2)/2, midY = (y1+y2)/2;
+      linesG.append(el('line', { x1, y1, x2, y2, stroke: '#94a3b8', 'stroke-width': 1.5, 'stroke-dasharray': '6,4' }));
+      const rg = el('g');
+      rg.append(el('rect', { x: midX-52, y: midY-11, width: 104, height: 22, rx: 7, fill: 'white', stroke: '#e2e8f0', 'stroke-width': 1 }));
+      rg.append(el('text', { x: midX, y: midY+4, fill: '#94a3b8', 'font-size': 9, 'font-weight': 600, 'text-anchor': 'middle' }, '同源不同產出'));
+      nodesG.append(rg);
+    }
+  }
+
+  svg.append(linesG, nodesG);
+}
+
+function el(tag, attrs, text) {
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  if (attrs) Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+  if (text) e.textContent = text;
+  return e;
+}
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('tab-mm').classList.contains('active')) renderMindMap();
+});
 </script>
 
 </body>
