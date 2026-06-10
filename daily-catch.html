@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Catch — 每天玩的互動英語學習工具 ｜ Product Design</title>
+<style>
+  :root {
+    --blue: #0ea5e9; --blue-bg: #e0f2fe; --blue-dk: #0369a1;
+    --green: #10b981; --green-bg: #d1fae5; --green-dk: #065f46;
+    --purple: #8b5cf6; --purple-bg: #ede9fe; --purple-dk: #5b21b6;
+    --teal: #14b8a6; --teal-bg: #ccfbf1; --teal-dk: #115e59;
+    --amber: #f59e0b; --amber-bg: #fef3c7; --amber-dk: #92400e;
+    --rose: #f43f5e; --rose-bg: #ffe4e6; --rose-dk: #9f1239;
+    --gray: #64748b; --gray-bg: #f1f5f9; --border: #e2e8f0;
+    --dark: #1e293b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: var(--dark); line-height: 1.55; }
+
+  /* ===== GLOBAL NAV ===== */
+  .top-bar { background: var(--dark); color: white; padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
+  .top-bar-inner { max-width: 1500px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .top-bar h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .top-bar .subtitle { font-size: 11px; opacity: 0.5; margin-top: 2px; }
+  .tab-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab-btn { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+  .tab-btn.active { background: white; color: var(--dark); }
+  .tab-btn .tab-num { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 800; text-align: center; line-height: 20px; margin-right: 6px; }
+  .tab-btn.active .tab-num { background: var(--dark); color: white; }
+
+  /* ===== TAB CONTENT ===== */
+  .tab-content { display: none; padding: 40px 20px; }
+  .tab-content.active { display: block; }
+  .w { max-width: 1300px; margin: 0 auto; }
+
+  h2.page-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.4px; }
+  p.page-sub { font-size: 13px; color: var(--gray); margin-bottom: 30px; }
+
+  /* ===== Section header ===== */
+  .sh { display: flex; align-items: center; gap: 12px; margin: 44px 0 8px; }
+  .sh:first-of-type { margin-top: 0; }
+  .sn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: #fff; flex-shrink: 0; }
+  .sn.c1 { background: var(--blue); } .sn.c2 { background: var(--green); }
+  .sn.c3 { background: var(--purple); } .sn.c4 { background: var(--teal); }
+  .sn.c5 { background: var(--amber); } .sn.c6 { background: var(--rose); }
+  .st { font-size: 18px; font-weight: 800; }
+  .sd { font-size: 12px; color: var(--gray); }
+
+  /* ===== Tags ===== */
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.3px; vertical-align: middle; }
+  .tag.p0 { background: var(--green-bg); color: var(--green-dk); }
+  .tag.p1 { background: var(--amber-bg); color: var(--amber-dk); }
+  .tag.p2 { background: var(--rose-bg); color: var(--rose-dk); }
+  .tag.blue { background: var(--blue-bg); color: var(--blue-dk); }
+  .tag.purple { background: var(--purple-bg); color: var(--purple-dk); }
+  .tag.teal { background: var(--teal-bg); color: var(--teal-dk); }
+
+  /* ===== Cards ===== */
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  @media (max-width: 900px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+  .explain { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin: 12px 0 18px; font-size: 13px; color: #475569; display: flex; gap: 12px; align-items: flex-start; }
+  .explain .icon { font-size: 20px; flex-shrink: 0; }
+  .explain strong { color: var(--dark); }
+  .callout { border-left: 4px solid var(--purple); background: var(--purple-bg); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 16px 0; font-size: 13.5px; color: var(--purple-dk); }
+  .callout strong { color: #4c1d95; }
+
+  /* ===== Tables ===== */
+  .tbl-wrap { overflow-x: auto; }
+  table.t { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 12.5px; }
+  table.t th { background: var(--gray-bg); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  table.t td { padding: 11px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  table.t tr:last-child td { border-bottom: none; }
+  .hi { background: #fffbeb; }
+  .nm { font-weight: 700; }
+  .muted { color: #94a3b8; font-size: 11px; }
+
+  /* ===== Persona ===== */
+  .persona { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+  @media (max-width: 700px){ .persona { grid-template-columns: 1fr; } }
+  .persona-photo { background: linear-gradient(135deg,var(--blue),var(--purple)); border-radius: 14px; color: #fff; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .persona-photo .emoji { font-size: 56px; }
+  .persona-photo .pname { font-size: 18px; font-weight: 800; margin-top: 8px; }
+  .persona-photo .ptag { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+  .pblock h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 6px; }
+  .pblock { margin-bottom: 14px; }
+  .pblock ul { margin-left: 18px; font-size: 13px; }
+  .pblock li { margin-bottom: 3px; }
+
+  /* ===== Daily loop ===== */
+  .loop { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; margin: 18px 0; position: relative; }
+  @media (max-width: 900px){ .loop { grid-template-columns: 1fr; } }
+  .loop-step { background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 18px; position: relative; margin: 6px; }
+  .loop-step .lnum { width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: 800; display: flex; align-items:center; justify-content:center; font-size: 14px; margin-bottom: 10px; }
+  .loop-step.s1 { border-color: var(--blue); } .loop-step.s1 .lnum { background: var(--blue); }
+  .loop-step.s2 { border-color: var(--green); } .loop-step.s2 .lnum { background: var(--green); }
+  .loop-step.s3 { border-color: var(--purple); } .loop-step.s3 .lnum { background: var(--purple); }
+  .loop-step.s4 { border-color: var(--amber); } .loop-step.s4 .lnum { background: var(--amber); }
+  .loop-step h4 { font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+  .loop-step .ltime { font-size: 11px; color: var(--gray); margin-bottom: 8px; }
+  .loop-step p { font-size: 12px; color: #475569; }
+
+  /* ===== Sitemap tree ===== */
+  .tree { font-family: 'SF Mono', Menlo, monospace; font-size: 13px; background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 22px 24px; line-height: 1.9; overflow-x: auto; }
+  .tree .root { color: #7dd3fc; font-weight: 700; }
+  .tree .br { color: #475569; }
+  .tree .lf { color: #a5b4fc; }
+  .tree .cm { color: #64748b; }
+
+  /* ===== Wireframe phone ===== */
+  .wf-row { display: flex; gap: 22px; flex-wrap: wrap; }
+  .phone { width: 260px; flex-shrink: 0; }
+  .phone-screen { border: 8px solid #1e293b; border-radius: 28px; background: #fff; height: 500px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+  .phone-cap { text-align: center; font-size: 12px; font-weight: 700; margin-top: 10px; color: var(--gray); }
+  .wf-status { background: #f1f5f9; height: 22px; flex-shrink: 0; }
+  .wf-body { flex: 1; padding: 14px; overflow-y: auto; }
+  .wf-bar { height: 12px; background: #e2e8f0; border-radius: 6px; margin-bottom: 8px; }
+  .wf-bar.s { width: 55%; } .wf-bar.m { width: 75%; }
+  .wf-box { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 12px; font-size: 11px; color: var(--gray); text-align: center; margin-bottom: 10px; }
+  .wf-chip { display: inline-block; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 4px 10px; font-size: 11px; margin: 2px; color: #475569; }
+  .wf-btn { background: var(--blue); color: #fff; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; font-weight: 700; }
+  .wf-nav { display: flex; justify-content: space-around; border-top: 1px solid var(--border); padding: 8px 0; font-size: 16px; flex-shrink: 0; }
+  .wf-label { font-size: 11px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+
+  /* ===== Prototype ===== */
+  .proto-wrap { display: flex; gap: 30px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
+  .device { width: 340px; border: 10px solid #1e293b; border-radius: 40px; background: #fff; height: 700px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+  .device-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 130px; height: 24px; background: #1e293b; border-radius: 0 0 14px 14px; z-index: 20; }
+  .app { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .app-head { padding: 30px 18px 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 1px solid var(--border); }
+  .app-head .logo { font-weight: 800; font-size: 16px; color: var(--blue-dk); }
+  .app-streak { font-size: 13px; font-weight: 800; color: var(--amber-dk); background: var(--amber-bg); padding: 4px 10px; border-radius: 20px; }
+  .progress-track { height: 6px; background: var(--gray-bg); border-radius: 3px; margin: 12px 18px; flex-shrink: 0; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 3px; width: 0%; transition: width 0.4s; }
+  .screen { flex: 1; padding: 8px 18px 18px; overflow-y: auto; display: none; flex-direction: column; }
+  .screen.active { display: flex; }
+  .screen-eyebrow { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .screen h3 { font-size: 19px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
+  .screen p.lead { font-size: 13px; color: #475569; margin-bottom: 14px; }
+  .input-mock { border: 2px solid var(--border); border-radius: 12px; padding: 12px; font-size: 13px; color: var(--dark); min-height: 70px; margin-bottom: 12px; background: #fafafa; }
+  .input-mock.typed { color: var(--dark); }
+  .opt-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .opt { flex: 1; border: 2px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; min-width: 80px; }
+  .opt:hover { border-color: var(--blue); background: var(--blue-bg); }
+  .opt .oe { font-size: 22px; display: block; margin-bottom: 4px; }
+  .pill { display: inline-block; background: var(--blue-bg); color: var(--blue-dk); border-radius: 8px; padding: 6px 10px; font-size: 13px; font-weight: 700; margin: 3px 4px 3px 0; }
+  .learn-card { border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .learn-card .lc-h { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 8px; }
+  .learn-card .word { font-size: 16px; font-weight: 800; }
+  .learn-card .ipa { font-size: 12px; color: var(--gray); }
+  .learn-card .def { font-size: 13px; color: #475569; margin-top: 2px; }
+  .quiz-opt { border: 2px solid var(--border); border-radius: 12px; padding: 13px 14px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: all 0.15s; }
+  .quiz-opt:hover { border-color: var(--blue); }
+  .quiz-opt.correct { border-color: var(--green); background: var(--green-bg); color: var(--green-dk); }
+  .quiz-opt.wrong { border-color: var(--rose); background: var(--rose-bg); color: var(--rose-dk); }
+  .feedback { border-radius: 12px; padding: 12px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: var(--green-bg); color: var(--green-dk); }
+  .feedback.tip { background: var(--amber-bg); color: var(--amber-dk); }
+  .mic-btn { width: 80px; height: 80px; border-radius: 50%; background: var(--purple); color: #fff; font-size: 32px; border: none; cursor: pointer; margin: 10px auto; display: flex; align-items: center; justify-content: center; transition: transform 0.15s; }
+  .mic-btn:hover { transform: scale(1.06); }
+  .mic-btn.rec { background: var(--rose); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.4);} 50%{box-shadow:0 0 0 14px rgba(244,63,94,0);} }
+  .app-cta { margin: 0 18px 18px; flex-shrink: 0; }
+  .btn { display: block; width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 14px; padding: 15px; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+  .btn:hover { filter: brightness(1.05); }
+  .btn.green { background: var(--green); }
+  .btn.purple { background: var(--purple); }
+  .btn.ghost { background: #fff; color: var(--blue-dk); border: 2px solid var(--border); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .done-emoji { font-size: 64px; text-align: center; margin: 10px 0; }
+  .stat-row { display: flex; gap: 10px; margin: 14px 0; }
+  .stat { flex: 1; background: var(--gray-bg); border-radius: 12px; padding: 12px; text-align: center; }
+  .stat .sv { font-size: 22px; font-weight: 800; color: var(--blue-dk); }
+  .stat .sl { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px; }
+  .proto-side { max-width: 360px; }
+  .proto-side h4 { font-size: 13px; font-weight: 800; margin: 16px 0 6px; }
+  .proto-side p, .proto-side li { font-size: 13px; color: #475569; }
+  .proto-side ul { margin-left: 18px; }
+  .reset-link { font-size: 12px; color: var(--gray); text-decoration: underline; cursor: pointer; margin-top: 14px; display: inline-block; }
+
+  .page-footer { text-align: center; font-size: 11px; color: #94a3b8; padding: 30px; border-top: 1px solid var(--border); margin-top: 20px; }
+  .kpi { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  @media (max-width:700px){ .kpi { grid-template-columns:1fr; } }
+  .kpi .card .kv { font-size: 26px; font-weight: 800; color: var(--blue-dk); }
+  .kpi .card .kl { font-size: 12px; color: var(--gray); }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div>
+      <h1>Daily Catch — 每天玩的互動英語學習工具</h1>
+      <div class="subtitle">Product Design System &nbsp;|&nbsp; 給「人在英語環境、但基礎不穩」的學習者 &nbsp;|&nbsp; 2026</div>
+    </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('st')"><span class="tab-num">1</span>策略 Strategy</button>
+      <button class="tab-btn" onclick="switchTab('ia')"><span class="tab-num">2</span>資訊架構 IA</button>
+      <button class="tab-btn" onclick="switchTab('wf')"><span class="tab-num">3</span>線框圖 Wireframe</button>
+      <button class="tab-btn" onclick="switchTab('sp')"><span class="tab-num">4</span>功能規格 Spec</button>
+      <button class="tab-btn" onclick="switchTab('pt')"><span class="tab-num">5</span>互動原型 Prototype</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 1: STRATEGY                                               -->
+<!-- ============================================================ -->
+<div id="tab-st" class="tab-content active">
+<div class="w">
+  <h2 class="page-title">策略與洞察 Strategy & Insight</h2>
+  <p class="page-sub">使用者畫像 · 真正的問題 · 競品分析 · 產品定位</p>
+
+  <div class="callout">
+    <strong>核心洞察：</strong>你人在紐約 2 年，不缺英文「輸入環境」。沒進步的真正原因是 ——
+    學的字跟你<strong>真實生活脫節</strong>、只練選擇題<strong>不練產出</strong>、而且<strong>沒有被糾正的回饋迴路</strong>。
+    所以解法不是「再學一套教材」，而是把你<strong>今天真實遇到的英文</strong>變成每天的練習。
+  </div>
+
+  <!-- Persona -->
+  <div class="sh"><div class="sn c1">1</div><div><div class="st">使用者畫像 Persona</div><div class="sd">目標用戶的需求、痛點與行為</div></div></div>
+  <div class="card">
+    <div class="persona">
+      <div class="persona-photo">
+        <div class="emoji">🧋</div>
+        <div class="pname">Mia, 27</div>
+        <div class="ptag">在地浸泡型學習者<br>紐約 · 設計工作 · 居住 2 年</div>
+      </div>
+      <div>
+        <div class="grid-2">
+          <div class="pblock">
+            <h4>🎯 動機 Goals</h4>
+            <ul>
+              <li>社交、職場溝通時有自信</li>
+              <li>不想再「假裝聽懂」</li>
+              <li>能自在寫 email、開口閒聊</li>
+            </ul>
+          </div>
+          <div class="pblock">
+            <h4>😣 痛點 Pain Points</h4>
+            <ul>
+              <li>單字背了就忘、用不出來</li>
+              <li>文法看得懂、當下組不出句</li>
+              <li>聽懂大概但開口卡住</li>
+              <li>怕被糾正、怕丟臉</li>
+            </ul>
+          </div>
+          <div class="pblock">
+            <h4>📱 行為 Behavior</h4>
+            <ul>
+              <li>通勤／睡前 10–15 分鐘碎片時間</li>
+              <li>手機重度使用</li>
+              <li>日常 60% 接觸英文，靠猜硬撐</li>
+            </ul>
+          </div>
+          <div class="pblock">
+            <h4>🧠 心理 Mindset</h4>
+            <ul>
+              <li>需要「安全的練習場」</li>
+              <li>容易因挫折放棄</li>
+              <li>想看到「我真的在進步」</li>
+            </ul>
+          </div>
+        </div>
+        <div class="explain" style="margin-bottom:0;">
+          <span class="icon">💬</span>
+          <div><strong>JTBD：</strong>「當我每天在紐約遇到聽不懂或說不出口的英文時，我想把它變成我自己的東西，這樣下次我就能自信地用出來。」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Problem reframe -->
+  <div class="sh"><div class="sn c2">2</div><div><div class="st">問題重構 Reframe</div><div class="sd">你以為的問題 vs. 真正的問題</div></div></div>
+  <div class="tbl-wrap">
+    <table class="t">
+      <thead><tr><th>你以為的問題</th><th>真正的問題</th><th>多鄰國能解嗎</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">單字量不夠</td><td>學的是「app 裡的字」，跟你真實遇到的字沒關係 → 記不住、用不出</td><td>❌ 內容跟生活脫節</td></tr>
+        <tr><td class="nm">文法不紮實</td><td>「看得懂」規則，但開口／打字當下組不出句子</td><td>⚠️ 只練選擇題，不練產出</td></tr>
+        <tr class="hi"><td class="nm">沒進步</td><td>每天被動接收英文，從來沒有刻意輸出 + 被糾正</td><td>❌ 沒有真實回饋迴路</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Competitive -->
+  <div class="sh"><div class="sn c3">3</div><div><div class="st">競品分析 Competitive Analysis</div><div class="sd">市場上做了什麼、留了什麼缺口給我們</div></div></div>
+  <div class="tbl-wrap">
+    <table class="t">
+      <thead><tr><th>產品</th><th>強項</th><th>弱點 / 缺口</th><th>對 Mia 的問題</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">Duolingo 🦉</td><td>遊戲化、習慣養成、上手快</td><td>內容虛構脫離生活、偏選擇題、產出弱</td><td>背了用不出來</td></tr>
+        <tr><td class="nm">Babbel</td><td>對話實用、文法解釋清楚</td><td>內容固定、跟「你的」生活無關、較枯燥</td><td>仍是別人的教材</td></tr>
+        <tr><td class="nm">Cake / 抖音學英文</td><td>真實影片、道地用法</td><td>被動觀看為主、無系統、無產出回饋</td><td>看爽但不會用</td></tr>
+        <tr><td class="nm">ChatGPT 對話</td><td>即時、個人化、能糾正</td><td>無結構、無習慣機制、不會主動推你</td><td>三天捕魚兩天曬網</td></tr>
+        <tr class="hi"><td class="nm">⭐ Daily Catch</td><td><strong>你的真實素材 + 產出練習 + AI 糾正 + 習慣機制</strong></td><td>需 AI 成本、需冷啟動內容</td><td><strong>正中紅心</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Positioning -->
+  <div class="sh"><div class="sn c4">4</div><div><div class="st">產品定位 Positioning</div><div class="sd">一句話講清楚我們是誰</div></div></div>
+  <div class="grid-3">
+    <div class="card"><div style="font-size:30px">🎯</div><h4 style="margin:8px 0 4px">情境優先</h4><p style="font-size:13px;color:#475569">Context over Content — 練習素材來自你真實生活，不是虛構句子</p></div>
+    <div class="card"><div style="font-size:30px">🗣️</div><h4 style="margin:8px 0 4px">產出優先</h4><p style="font-size:13px;color:#475569">Output over Input — 每天一定要說出來/寫出來，不只點選擇題</p></div>
+    <div class="card"><div style="font-size:30px">🛟</div><h4 style="margin:8px 0 4px">安心出錯</h4><p style="font-size:13px;color:#475569">Safe to fail — AI 即時糾正、零社交壓力，把怕丟臉變成私下練爽</p></div>
+  </div>
+  <div class="callout" style="border-color:var(--blue);background:var(--blue-bg);color:var(--blue-dk)">
+    <strong>一句話定位：</strong>Daily Catch 不是再給你一套教材，而是把你<strong>今天真實遇到的英文</strong>，變成每天 10 分鐘的遊戲化練習。
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: INFORMATION ARCHITECTURE                              -->
+<!-- ============================================================ -->
+<div id="tab-ia" class="tab-content">
+<div class="w">
+  <h2 class="page-title">資訊架構 Information Architecture</h2>
+  <p class="page-sub">每日核心循環 · Sitemap · 功能清單</p>
+
+  <!-- Daily loop -->
+  <div class="sh"><div class="sn c1">1</div><div><div class="st">每日核心循環 The Daily Loop</div><div class="sd">產品的心臟 — 每天打開 app 走一遍，約 10 分鐘</div></div></div>
+  <div class="explain"><span class="icon">🔁</span><div>整個產品圍繞這個循環設計。它把「被動接收」變成「捕捉 → 學 → 產出 → 複習」的閉環，補上你缺的<strong>回饋迴路</strong>。</div></div>
+  <div class="loop">
+    <div class="loop-step s1"><div class="lnum">1</div><h4>今日捕捉 Catch</h4><div class="ltime">⏱ 30 秒</div><p>「今天有沒有哪句英文你聽不懂/說不出口？」打字、拍照（菜單/告示/email）、或語音輸入。沒素材時 app 用「今日情境包」補上。</p></div>
+    <div class="loop-step s2"><div class="lnum">2</div><h4>拆解學習 Learn</h4><div class="ltime">⏱ 3 分鐘</div><p>AI 把那句拆成 3 個關鍵字 + 1 個文法重點 + 1 個道地用法。只教這句會用到的文法，不從零教文法書。</p></div>
+    <div class="loop-step s3"><div class="lnum">3</div><h4>主動產出 Produce</h4><div class="ltime">⏱ 5 分鐘</div><p>把今天的字／文法，用在 3 個跟你生活有關的新句子。語音跟讀 + AI 即時糾音糾文法。「換你說」情境問答。</p></div>
+    <div class="loop-step s4"><div class="lnum">4</div><h4>明日複習 Recall</h4><div class="ltime">⏱ 1 分鐘</div><p>用間隔重複（SRS）把舊字詞排進明天，解決「背了就忘」。完成 → streak +1。</p></div>
+  </div>
+
+  <!-- Sitemap -->
+  <div class="sh"><div class="sn c2">2</div><div><div class="st">Sitemap 網站地圖</div><div class="sd">5 大區塊的資訊層級</div></div></div>
+  <div class="tree">
+<span class="root">Daily Catch</span>
+<span class="br">├──</span> 🏠 <span class="lf">Today</span> <span class="cm"># 每日循環主場景（預設首頁）</span>
+<span class="br">│   ├──</span> 今日捕捉 Catch <span class="cm"># 文字 / 拍照 / 語音輸入</span>
+<span class="br">│   ├──</span> 拆解學習 Learn <span class="cm"># 關鍵字 + 文法 + 道地用法</span>
+<span class="br">│   ├──</span> 主動產出 Produce <span class="cm"># 造句 / 跟讀 / 情境問答</span>
+<span class="br">│   └──</span> 完成總結 Recap <span class="cm"># streak + 今日學會了什麼</span>
+<span class="br">├──</span> 📚 <span class="lf">My Words</span> <span class="cm"># 個人單字庫 + 間隔複習 SRS</span>
+<span class="br">│   ├──</span> 待複習 / 已掌握 / 全部
+<span class="br">│   └──</span> 每個字：例句來源、用過幾次
+<span class="br">├──</span> 🎯 <span class="lf">Scenarios</span> <span class="cm"># 情境關卡</span>
+<span class="br">│   ├──</span> 點餐 / 看醫生 / 職場 small talk / 面試 …
+<span class="br">│   └──</span> 每關：對話演練 + 角色扮演
+<span class="br">├──</span> 📈 <span class="lf">Progress</span> <span class="cm"># 成長軌跡</span>
+<span class="br">│   ├──</span> Streak + 連續天數行事曆
+<span class="br">│   └──</span> 「本月學會 30 字，已用過 12 次」
+<span class="br">└──</span> 👤 <span class="lf">Profile</span> <span class="cm"># 程度設定、提醒時間、目標</span>
+  </div>
+
+  <!-- Feature list -->
+  <div class="sh"><div class="sn c3">3</div><div><div class="st">功能清單 Feature List</div><div class="sd">每個區塊提供什麼能力</div></div></div>
+  <div class="tbl-wrap">
+    <table class="t">
+      <thead><tr><th style="width:30px">#</th><th>區塊</th><th>核心功能</th><th>解決的痛點</th><th>優先</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">A</td><td>Today · Catch</td><td>多模態輸入（文字/拍照 OCR/語音）擷取真實素材</td><td>內容脫離生活</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="nm">B</td><td>Today · Learn</td><td>AI 拆句：關鍵字＋情境文法＋道地用法</td><td>文法學不下去</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="nm">C</td><td>Today · Produce</td><td>造句 / 語音跟讀 / AI 糾音糾文法 / 情境問答</td><td>不練產出</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="nm">D</td><td>My Words</td><td>間隔重複 SRS 自動排程複習</td><td>背了就忘</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="nm">E</td><td>Progress</td><td>Streak、保護卡、真實成長軌跡</td><td>容易放棄</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td class="nm">F</td><td>Scenarios</td><td>情境關卡角色扮演</td><td>怕真實場景</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td class="nm">G</td><td>Today · Catch</td><td>拍照 OCR 辨識菜單/告示</td><td>輸入摩擦</td><td><span class="tag p1">P1</span></td></tr>
+        <tr><td class="nm">H</td><td>Social</td><td>同城匿名「今日金句牆」</td><td>缺陪伴</td><td><span class="tag p2">P2</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: WIREFRAME                                             -->
+<!-- ============================================================ -->
+<div id="tab-wf" class="tab-content">
+<div class="w">
+  <h2 class="page-title">線框圖 Wireframes</h2>
+  <p class="page-sub">每日循環四個主畫面的低保真佈局（看互動版請切到 Tab 5）</p>
+
+  <div class="wf-row">
+    <!-- WF1 Catch -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="wf-status"></div>
+        <div class="wf-body">
+          <div class="wf-label">① 今日捕捉</div>
+          <div class="wf-bar m"></div><div class="wf-bar s"></div>
+          <div class="wf-box" style="min-height:90px">今天遇到哪句<br>聽不懂/說不出的英文？</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <span class="wf-chip">⌨️ 打字</span><span class="wf-chip">📷 拍照</span><span class="wf-chip">🎙 語音</span>
+          </div>
+          <div class="wf-box">沒有素材？<br>用今日情境包 →</div>
+          <div class="wf-btn">下一步</div>
+        </div>
+        <div class="wf-nav"><span>🏠</span><span>📚</span><span>🎯</span><span>📈</span><span>👤</span></div>
+      </div>
+      <div class="phone-cap">Screen 1 · Catch 捕捉</div>
+    </div>
+
+    <!-- WF2 Learn -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="wf-status"></div>
+        <div class="wf-body">
+          <div class="wf-label">② 拆解學習</div>
+          <div class="wf-box" style="text-align:left">原句 "It's on me tonight."</div>
+          <div class="wf-bar"></div>
+          <div class="wf-box" style="text-align:left;min-height:60px">🔑 關鍵字 ×3<br><span class="wf-chip">on me</span><span class="wf-chip">tonight</span></div>
+          <div class="wf-box" style="text-align:left">📐 文法重點：介系詞 on = 由我買單</div>
+          <div class="wf-box" style="text-align:left">💡 道地用法 / 同義說法</div>
+          <div class="wf-btn">我懂了，換我用</div>
+        </div>
+        <div class="wf-nav"><span>🏠</span><span>📚</span><span>🎯</span><span>📈</span><span>👤</span></div>
+      </div>
+      <div class="phone-cap">Screen 2 · Learn 拆解</div>
+    </div>
+
+    <!-- WF3 Produce -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="wf-status"></div>
+        <div class="wf-body">
+          <div class="wf-label">③ 主動產出</div>
+          <div class="wf-box" style="text-align:left">情境：同事生日，你想請客</div>
+          <div class="wf-box" style="min-height:80px">🎙<br>長按說出你的句子</div>
+          <div class="wf-box" style="text-align:left;min-height:70px">AI 回饋：<br>✓ 文法 OK<br>⚠️ 發音 "tonight" 再清楚點</div>
+          <div class="wf-btn">下一題</div>
+        </div>
+        <div class="wf-nav"><span>🏠</span><span>📚</span><span>🎯</span><span>📈</span><span>👤</span></div>
+      </div>
+      <div class="phone-cap">Screen 3 · Produce 產出</div>
+    </div>
+
+    <!-- WF4 Recap -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="wf-status"></div>
+        <div class="wf-body">
+          <div class="wf-label">④ 完成總結</div>
+          <div class="wf-box" style="min-height:70px;font-size:30px">🔥</div>
+          <div class="wf-box" style="text-align:left">連續 8 天！</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <div class="wf-box" style="flex:1;margin:0">3<br>新字</div>
+            <div class="wf-box" style="flex:1;margin:0">1<br>文法</div>
+            <div class="wf-box" style="flex:1;margin:0">5<br>句子</div>
+          </div>
+          <div class="wf-box" style="text-align:left">明日複習：on me, tonight…</div>
+          <div class="wf-btn">完成 ✓</div>
+        </div>
+        <div class="wf-nav"><span>🏠</span><span>📚</span><span>🎯</span><span>📈</span><span>👤</span></div>
+      </div>
+      <div class="phone-cap">Screen 4 · Recap 總結</div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:30px">
+    <strong>設計重點：</strong>底部固定 5 個 tab（🏠📚🎯📈👤）對應 Sitemap 五大區塊；每日循環走在 🏠 Today 內，用頂部進度條表示「今天走到哪一步」，降低中途放棄。
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: SPEC                                                  -->
+<!-- ============================================================ -->
+<div id="tab-sp" class="tab-content">
+<div class="w">
+  <h2 class="page-title">功能規格 Specification</h2>
+  <p class="page-sub">MVP 範圍 · 遊戲化機制 · 技術選型 · 成功指標</p>
+
+  <!-- MVP -->
+  <div class="sh"><div class="sn c1">1</div><div><div class="st">MVP 範圍 — 先做什麼、砍什麼</div><div class="sd">用最小成本驗證「真實素材 + 產出 + 糾正」是否有效</div></div></div>
+  <div class="tbl-wrap">
+    <table class="t">
+      <thead><tr><th>優先</th><th>功能</th><th>為什麼</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td><span class="tag p0">P0</span></td><td class="nm">每日循環 ①②③④ + 文字/語音輸入</td><td>產品命脈，沒它就不成立</td></tr>
+        <tr class="hi"><td><span class="tag p0">P0</span></td><td class="nm">AI 拆解 + AI 糾正（LLM）</td><td>核心差異點：真實情境 + 即時回饋</td></tr>
+        <tr class="hi"><td><span class="tag p0">P0</span></td><td class="nm">Streak + 間隔複習 SRS</td><td>留存的兩大支柱</td></tr>
+        <tr><td><span class="tag p1">P1</span></td><td class="nm">情境關卡、拍照 OCR 輸入</td><td>增強體驗，但非核心</td></tr>
+        <tr><td><span class="tag p2">P2</span></td><td class="nm">社交牆、同城功能</td><td>後期再做，先驗證核心價值</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Gamification -->
+  <div class="sh"><div class="sn c2">2</div><div><div class="st">遊戲化機制 Gamification</div><div class="sd">學多鄰國，但避開讓人放棄的坑</div></div></div>
+  <div class="tbl-wrap">
+    <table class="t">
+      <thead><tr><th>機制</th><th>怎麼做</th><th>為什麼</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">🔥 連續天數 Streak</td><td>每天完成循環 +1</td><td>養成習慣最強的鉤子</td></tr>
+        <tr><td class="nm">❄️ Streak 保護卡</td><td>忙到沒空可用 1 張凍結</td><td>多鄰國斷 streak 讓人放棄 → 降低挫敗</td></tr>
+        <tr><td class="nm">🌱 真實成長軌跡</td><td>「這個月學的 30 字，已用過 12 次」</td><td>比金幣更有意義的成就感</td></tr>
+        <tr><td class="nm">🏆 情境關卡</td><td>點餐關、看醫生關、面試關</td><td>對應真實要面對的場景</td></tr>
+        <tr><td class="nm">👥 輕社交（選配）</td><td>同城匿名「今日金句牆」</td><td>同溫層陪伴，不強迫比較</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="border-color:var(--rose);background:var(--rose-bg);color:var(--rose-dk)">
+    <strong>⚠️ 刻意不做：</strong>不做硬性排行榜、不做「掉血」懲罰、不用愛心限制學習次數 —— 這些會放大 Mia「怕失敗」的心理。
+  </div>
+
+  <!-- Tech -->
+  <div class="sh"><div class="sn c3">3</div><div><div class="st">技術選型 Tech Stack（建議）</div><div class="sd">讓 MVP 跑得起來的最小組合</div></div></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4 style="margin-bottom:8px">前端 / App</h4>
+      <ul style="font-size:13px;margin-left:18px;color:#475569">
+        <li>React Native / Expo（一套碼跨 iOS+Android）</li>
+        <li>裝置端語音輸入（Speech-to-Text）</li>
+        <li>本地通知做每日提醒</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-bottom:8px">後端 / AI</h4>
+      <ul style="font-size:13px;margin-left:18px;color:#475569">
+        <li>LLM（拆句、造句、糾正回饋）— 用最新、最有能力的 Claude 模型</li>
+        <li>TTS 道地發音 + 發音評分 API</li>
+        <li>OCR（拍照辨識）為 P1</li>
+        <li>SRS 排程：SM-2 演算法即可起步</li>
+      </ul>
+    </div>
+  </div>
+  <div class="explain"><span class="icon">💡</span><div><strong>AI 成本控管：</strong>拆句/糾正屬高頻呼叫，建議快取常見句型、對重複素材重用結果，並把「免費每日 1 次完整循環、進階無限」設為商業模式分界。</div></div>
+
+  <!-- Metrics -->
+  <div class="sh"><div class="sn c4">4</div><div><div class="st">成功指標 Success Metrics</div><div class="sd">怎麼知道產品真的有效</div></div></div>
+  <div class="kpi">
+    <div class="card"><div class="kv">D7 / D30</div><div class="kl">次日 / 30 日留存 — 習慣是否養成</div></div>
+    <div class="card"><div class="kv">產出率</div><div class="kl">完成「說/寫」步驟的比例 — 核心價值是否被使用</div></div>
+    <div class="card"><div class="kv">複用率</div><div class="kl">學過的字「在新句子被用到」次數 — 是否真的學會</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: PROTOTYPE                                             -->
+<!-- ============================================================ -->
+<div id="tab-pt" class="tab-content">
+<div class="w">
+  <h2 class="page-title">互動原型 Clickable Prototype</h2>
+  <p class="page-sub">真的能點 — 走完一遍每日循環。點手機裡的按鈕往下走 👇</p>
+
+  <div class="proto-wrap">
+    <!-- DEVICE -->
+    <div class="device">
+      <div class="device-notch"></div>
+      <div class="app">
+        <div class="app-head">
+          <span class="logo">🎣 Daily Catch</span>
+          <span class="app-streak">🔥 <span id="streakNum">7</span></span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <!-- Screen 0: Welcome -->
+        <div class="screen active" id="s0">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center">
+            <div class="done-emoji">👋</div>
+            <h3 style="text-align:center">嗨 Mia，準備好今天的 10 分鐘了嗎？</h3>
+            <p class="lead" style="text-align:center">把你今天在紐約遇到的英文，變成你自己的。</p>
+          </div>
+        </div>
+
+        <!-- Screen 1: Catch -->
+        <div class="screen" id="s1">
+          <div class="screen-eyebrow" style="color:var(--blue-dk)">① 今日捕捉 CATCH</div>
+          <h3>今天有哪句英文<br>你聽不懂或說不出口？</h3>
+          <p class="lead">選一種方式記下來：</p>
+          <div class="opt-row">
+            <div class="opt" onclick="pickInput(this)"><span class="oe">⌨️</span>打字</div>
+            <div class="opt" onclick="pickInput(this)"><span class="oe">📷</span>拍照</div>
+            <div class="opt" onclick="pickInput(this)"><span class="oe">🎙️</span>語音</div>
+          </div>
+          <div class="input-mock" id="catchInput">點上面任一個，幫你帶入今天的例句…</div>
+          <div class="feedback tip" id="catchTip">💡 沒素材也沒關係 — 我從「咖啡店情境包」幫你抓了一句真實會遇到的話。</div>
+        </div>
+
+        <!-- Screen 2: Learn -->
+        <div class="screen" id="s2">
+          <div class="screen-eyebrow" style="color:var(--green-dk)">② 拆解學習 LEARN</div>
+          <h3>"It's on me tonight."</h3>
+          <p class="lead">同事說的 — 意思是「今晚我請客」。拆給你看：</p>
+          <div class="learn-card">
+            <div class="lc-h">🔑 關鍵字</div>
+            <span class="pill" onclick="speak('on me')">on me 🔊</span>
+            <span class="pill" onclick="speak('tonight')">tonight 🔊</span>
+            <span class="pill" onclick="speak('treat')">treat 🔊</span>
+          </div>
+          <div class="learn-card">
+            <div class="lc-h">📐 文法重點</div>
+            <div class="def"><strong>on + 人</strong> = 由某人買單／負責。<br>例：Lunch is <strong>on me</strong>. = 午餐我請。</div>
+          </div>
+          <div class="learn-card">
+            <div class="lc-h">💡 道地用法</div>
+            <div class="def">更口語還可以說：<em>"I got this one."</em> / <em>"My treat."</em></div>
+          </div>
+        </div>
+
+        <!-- Screen 3a: Produce (quiz) -->
+        <div class="screen" id="s3">
+          <div class="screen-eyebrow" style="color:var(--purple-dk)">③ 主動產出 PRODUCE</div>
+          <h3>換你用 — 選出正確說法</h3>
+          <p class="lead">朋友要付錢，你想說「這次我請」，該說哪句？</p>
+          <div class="quiz-opt" onclick="answer(this,false)">"This time on I." </div>
+          <div class="quiz-opt" onclick="answer(this,true)">"This one's on me." ✅</div>
+          <div class="quiz-opt" onclick="answer(this,false)">"I am on this pay."</div>
+          <div class="feedback ok" id="quizFb">🎉 正確！<strong>on me</strong> 放句尾最自然。你已經會用了。</div>
+        </div>
+
+        <!-- Screen 3b: Produce (speak) -->
+        <div class="screen" id="s4">
+          <div class="screen-eyebrow" style="color:var(--purple-dk)">③ 主動產出 · 開口說</div>
+          <h3>輪到你開口 🎙️</h3>
+          <p class="lead">情境：同事生日，你想請大家喝咖啡。<br>長按麥克風，說出你的句子：</p>
+          <button class="mic-btn" id="micBtn" onclick="record()">🎙️</button>
+          <p style="text-align:center;font-size:12px;color:var(--gray)" id="micHint">長按開始（這裡用模擬）</p>
+          <div class="feedback ok" id="speakFb">
+            <strong>聽到你說：</strong>"Coffee is on me today!"<br>
+            ✓ 文法完美 &nbsp; ✓ 用對 on me<br>
+            ⚠️ 小提示：<strong>today</strong> 的 t 再清楚一點點就滿分了 👏
+          </div>
+        </div>
+
+        <!-- Screen 4: Recap -->
+        <div class="screen" id="s5">
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center">
+            <div class="done-emoji">🔥</div>
+            <h3 style="text-align:center">連續 <span id="newStreak">8</span> 天，做得好！</h3>
+            <p class="lead" style="text-align:center">今天你把真實遇到的一句話，變成會用的英文了。</p>
+            <div class="stat-row">
+              <div class="stat"><div class="sv">3</div><div class="sl">新字</div></div>
+              <div class="stat"><div class="sv">1</div><div class="sl">文法</div></div>
+              <div class="stat"><div class="sv">2</div><div class="sl">造句</div></div>
+            </div>
+            <div class="feedback tip show" style="text-align:left">
+              📅 <strong>明日複習：</strong>on me、tonight、treat<br>
+              已排進你的 My Words，用間隔重複幫你記牢。
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="app-cta">
+        <button class="btn" id="ctaBtn" onclick="nextStep()">開始今天 →</button>
+      </div>
+    </div>
+
+    <!-- SIDE NOTES -->
+    <div class="proto-side">
+      <h4>🧭 這個原型在演示什麼</h4>
+      <p>完整走一遍 <strong>Daily Loop</strong>：捕捉 → 拆解 → 產出（選擇 + 開口）→ 總結。頂部進度條會跟著前進，模擬真實的習慣養成體驗。</p>
+
+      <h4>👆 你可以互動的地方</h4>
+      <ul>
+        <li>Screen ①：點「打字／拍照／語音」會帶入例句</li>
+        <li>Screen ②：點關鍵字 pill 會「發音」（瀏覽器 TTS）</li>
+        <li>Screen ③：選答案會即時對錯回饋</li>
+        <li>Screen ③開口：點麥克風模擬錄音 + AI 糾正</li>
+        <li>底部按鈕推進到下一步</li>
+      </ul>
+
+      <h4>🎯 對應你的痛點</h4>
+      <ul>
+        <li><strong>脫離生活</strong> → 素材來自真實情境</li>
+        <li><strong>背了就忘</strong> → 結尾自動排進複習</li>
+        <li><strong>不練產出</strong> → 一定要選 + 開口</li>
+        <li><strong>怕丟臉</strong> → AI 私下糾正、鼓勵語氣</li>
+      </ul>
+
+      <span class="reset-link" onclick="resetProto()">↺ 重新走一遍</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="page-footer">
+  Daily Catch — 每天玩的互動英語學習工具 ｜ Product Design System ｜ Persona · IA · Wireframe · Spec · Prototype
+</div>
+
+<script>
+/* ===== TAB SWITCH ===== */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const map = { st: 0, ia: 1, wf: 2, sp: 3, pt: 4 };
+  document.querySelectorAll('.tab-btn')[map[tab]].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===== PROTOTYPE STATE MACHINE ===== */
+const steps = [
+  { screen: 's0', cta: '開始今天 →', progress: 0 },
+  { screen: 's1', cta: '記下來，拆解它 →', progress: 20 },
+  { screen: 's2', cta: '我懂了，換我用 →', progress: 40 },
+  { screen: 's3', cta: '下一題 →', progress: 60, gate: 'quiz' },
+  { screen: 's4', cta: '完成，看成果 →', progress: 80, gate: 'speak' },
+  { screen: 's5', cta: '🎉 完成今天的 Daily Catch', progress: 100, final: true },
+];
+let cur = 0;
+
+function renderStep() {
+  const st = steps[cur];
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(st.screen).classList.add('active');
+  document.getElementById('progressFill').style.width = st.progress + '%';
+  const cta = document.getElementById('ctaBtn');
+  cta.textContent = st.cta;
+  // gates: require interaction before enabling
+  if (st.gate === 'quiz' && !quizDone) cta.disabled = true;
+  else if (st.gate === 'speak' && !speakDone) cta.disabled = true;
+  else cta.disabled = false;
+  if (st.final) { cta.classList.add('green'); }
+  else { cta.classList.remove('green'); }
+}
+
+function nextStep() {
+  if (steps[cur].final) { resetProto(); return; }
+  cur++;
+  renderStep();
+}
+
+/* Screen 1 — input pick */
+function pickInput(el) {
+  document.querySelectorAll('#s1 .opt').forEach(o => o.style.borderColor = 'var(--border)');
+  el.style.borderColor = 'var(--blue)';
+  el.style.background = 'var(--blue-bg)';
+  document.getElementById('catchInput').classList.add('typed');
+  document.getElementById('catchInput').textContent = '“It\'s on me tonight.” — 同事午餐時說的，我沒聽懂 on me 是什麼意思。';
+  document.getElementById('catchTip').classList.add('show');
+}
+
+/* Screen 3 — quiz */
+let quizDone = false;
+function answer(el, correct) {
+  if (quizDone) return;
+  if (correct) {
+    el.classList.add('correct');
+    document.getElementById('quizFb').classList.add('show');
+    quizDone = true;
+    document.getElementById('ctaBtn').disabled = false;
+  } else {
+    el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 700);
+  }
+}
+
+/* Screen 4 — speak */
+let speakDone = false;
+function record() {
+  const btn = document.getElementById('micBtn');
+  const hint = document.getElementById('micHint');
+  if (speakDone) return;
+  btn.classList.add('rec');
+  hint.textContent = '錄音中…（模擬 2 秒）';
+  setTimeout(() => {
+    btn.classList.remove('rec');
+    hint.textContent = '分析完成 👇';
+    document.getElementById('speakFb').classList.add('show');
+    speakDone = true;
+    document.getElementById('ctaBtn').disabled = false;
+  }, 2000);
+}
+
+/* TTS for key words */
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+}
+
+/* Reset */
+function resetProto() {
+  cur = 0; quizDone = false; speakDone = false;
+  document.querySelectorAll('.feedback').forEach(f => { if (f.id !== '') f.classList.remove('show'); });
+  document.getElementById('catchInput').classList.remove('typed');
+  document.getElementById('catchInput').textContent = '點上面任一個，幫你帶入今天的例句…';
+  document.querySelectorAll('#s1 .opt').forEach(o => { o.style.borderColor = 'var(--border)'; o.style.background = '#fff'; });
+  document.querySelectorAll('.quiz-opt').forEach(q => q.classList.remove('correct','wrong'));
+  document.getElementById('micHint').textContent = '長按開始（這裡用模擬）';
+  renderStep();
+}
+
+renderStep();
+</script>
+</body>
+</html>
