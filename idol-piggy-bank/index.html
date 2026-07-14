@@ -130,10 +130,11 @@
   <div class="top-bar-inner">
     <div>
       <h1>🐷 愛豆存錢罐 Idol Piggy Bank</h1>
-      <div class="subtitle">產品規劃文件 v1.5 · 規劃拍板完成 · 2026-07</div>
+      <div class="subtitle">產品文檔 v2.0 · 規劃拍板完成 · 原型已上線 · 2026-07</div>
     </div>
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('concept', this)"><span class="tab-num">1</span>概念與計價規則</button>
+      <button class="tab-btn active" onclick="switchTab('docs', this)"><span class="tab-num">0</span>文檔總覽</button>
+      <button class="tab-btn" onclick="switchTab('concept', this)"><span class="tab-num">1</span>概念與計價規則</button>
       <button class="tab-btn" onclick="switchTab('users', this)"><span class="tab-num">2</span>目標用戶</button>
       <button class="tab-btn" onclick="switchTab('market', this)"><span class="tab-num">3</span>競品分析</button>
       <button class="tab-btn" onclick="switchTab('features', this)"><span class="tab-num">4</span>功能規劃</button>
@@ -144,8 +145,76 @@
   </div>
 </div>
 
+<!-- ============ TAB 0: DOCS MAP ============ -->
+<div id="tab-docs" class="tab-content active">
+  <div class="w">
+    <div class="page-head">
+      <h2>0 · 文檔總覽 — PM 文檔地圖</h2>
+      <p>一個產品經理在 0→1 階段該有的文檔套件、每份文檔存在的理由，以及它們在本文件中的位置。規劃已全數拍板，<b>原型已上線：<a href="app.html" style="color:var(--blue-dk); font-weight:700;">開啟可操作原型 →</a></b></p>
+    </div>
+
+    <div class="card">
+      <h3>🗂️ 文檔地圖：每份文檔回答一個「不回答就會出事」的問題</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>標準文檔</th><th>回答的問題</th><th>沒有它會發生什麼</th><th>在本專案的位置</th><th>狀態</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><b>產品需求文件 PRD</b></td><td>做什麼、為誰、為什麼、做到什麼程度算成功？</td><td>每個人腦中的產品長得不一樣；範圍無限膨脹（scope creep）</td><td>分頁 1（概念・定位・計價規則）＋分頁 4（功能總表・MVP 邊界・成功指標）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>2</td><td><b>用戶研究</b></td><td>用戶是誰？痛在哪？真實行為是什麼？</td><td>做出自己爽但沒人要的功能；假設當事實</td><td>分頁 2（persona・user stories・使用情境）＋原型階段的訪談/日記研究計畫</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>3</td><td><b>市場與競品分析</b></td><td>市場有誰？我們憑什麼贏？</td><td>重造輪子、或一頭撞上銀行級對手的強項</td><td>分頁 3（存錢類＋支出類兩張競品地圖・差異化敘事）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>4</td><td><b>決策紀錄 Decision Log</b></td><td>我們決定過什麼？為什麼？</td><td>同一場架每三個月重吵一次；新成員不知道地雷在哪</td><td>分頁 4（F13 否決卡・記錄與裝飾分離鐵律）＋分頁 7（風格拍板紀錄）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>5</td><td><b>資訊架構與流程</b></td><td>產品長什麼樣、怎麼動？</td><td>設計與工程各自想像，交接時才發現對不上</td><td>分頁 5（sitemap・線框・三條關鍵流程）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>6</td><td><b>資料模型</b></td><td>資料怎麼存、怎麼關聯？</td><td>上線後才發現 schema 要打掉重練，歷史資料遷移地獄</td><td>分頁 6（六實體・關聯與計算規則・V2 預留）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>7</td><td><b>設計規格</b></td><td>視覺長怎樣？規則是什麼？</td><td>每頁長得不一樣；「差不多就好」累積成災難</td><td>分頁 7（風格 D・衍生色引擎規格・克制原則）</td><td><span class="tag mvp">✅ 完成</span></td></tr>
+          <tr><td>8</td><td><b>產品路線圖 Roadmap</b></td><td>什麼時候做什麼？為什麼是這個順序？</td><td>什麼都想先做＝什麼都做不完；利害關係人期望失控</td><td>本頁下方（v2.0 新增）</td><td><span class="tag v2">🆕 本次補齊</span></td></tr>
+          <tr><td>9</td><td><b>指標框架 Metrics</b></td><td>怎麼知道成功或失敗？</td><td>上線後各自挑對自己有利的數字解讀；產品靠感覺迭代</td><td>本頁下方（v2.0 新增，整合分頁 4 成功指標）</td><td><span class="tag v2">🆕 本次補齊</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="rel-note">PM 心法：文檔不是為了寫而寫——每一份都是在「便宜的階段」回答一個「昂貴的問題」。規劃期改一行字免費，原型期改一個流程花一天，上線後改一個 schema 可能花一季。</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🗓️ 產品路線圖</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>階段</th><th>內容</th><th>出口條件（做完什麼才進下一階）</th></tr></thead>
+          <tbody>
+            <tr><td><b>P0 規劃</b><br><span class="tag mvp">✅ 完成</span></td><td>概念驗證、競品調研、三大拍板（風格 D／MVP 邊界／出廠單價）</td><td>本文件 v1.5 全數拍板</td></tr>
+            <tr><td><b>P1 原型</b><br><span class="tag core">進行中</span></td><td>可操作原型：F1–F6、風格 D、localStorage 單機版</td><td>三條關鍵流程可完整走通＋成功指標（3 秒記帳・2 分鐘上手）自測通過</td></tr>
+            <tr><td><b>P2 私測 α</b></td><td>給 5–10 位實行中的粉絲試用 2 週（含輕度粉，避免取樣偏差）</td><td>「比 Google 表單好用」質化確認＋週記錄留存 ≥ 50%</td></tr>
+            <tr><td><b>P3 公測 β</b></td><td>Threads／Dcard 追星版冷啟動；上 F7 統計、F8 年度回顧、F9 分享圖卡（獲客迴路）</td><td>自然流量的分享率與次週留存達標</td></tr>
+            <tr><td><b>P4 V2</b></td><td>F14 貼紙工房、F16 目標物顯影、F17 拼貼牆、F15 支出對照</td><td>視 β 數據排序，核心互動鏈優先</td></tr>
+            <tr><td><b>P5 展望</b></td><td>原生 app（share extension 記帳）、同擔空間、真實金流</td><td>—</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="rel-note">排序邏輯：先驗證「記帳夠快、算得對」（P1–P2 的生死題），再投資「傳播與收集」（P3–P4 的增長題）。順序反過來＝在沒人留下來的產品上做分享功能。</p>
+      </div>
+      <div class="card">
+        <h3>📐 指標框架（北極星＋KPI 樹）</h3>
+        <p><b>北極星指標：週活躍記錄者（WAR）</b>——每週至少記錄 1 筆的用戶數。選它的理由：同時反映「記帳夠快」（不快就不會每週用）與「情感價值成立」（無感就不會持續），且直接餵養護城河（紀錄累積＝搬家成本）。</p>
+        <h4>支撐指標（把北極星拆成可行動的小數字）</h4>
+        <ul>
+          <li><b>啟動</b>：Onboarding 完成率、首日記錄 ≥ 3 筆的比例（模板夠不夠好用）</li>
+          <li><b>效率</b>：單筆記錄中位耗時 ≤ 3 秒（核心承諾）</li>
+          <li><b>留存</b>：次週記錄留存率、連續記錄週數分布</li>
+          <li><b>深度</b>：進行中目標的用戶占比、目標達成數（情感引擎有沒有轉）</li>
+          <li><b>傳播</b>（P3 起）：分享圖卡輸出率、分享帶回的新用戶數</li>
+        </ul>
+        <h4>護欄指標（防止優化 A 傷到 B）</h4>
+        <ul>
+          <li>記帳完成率不得下降（任何新功能上線後檢查——見 F13 決策紀錄的 kill 條件）</li>
+          <li>單月存款額中位數 vs 用戶自報預算（防「存到焦慮」，對齊 UXR 風險）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ============ TAB 1: CONCEPT ============ -->
-<div id="tab-concept" class="tab-content active">
+<div id="tab-concept" class="tab-content">
   <div class="w">
     <div class="page-head">
       <h2>1 · 概念與計價規則</h2>
@@ -815,7 +884,7 @@
   </div>
 </div>
 
-<footer>愛豆存錢罐 · 產品規劃文件 v1.5 · 三大拍板全數完成（風格 D · MVP 邊界 · 出廠單價）· 進入原型製作階段</footer>
+<footer>愛豆存錢罐 · 產品文檔 v2.0 · 九大 PM 文檔齊備 · 原型（P1）已上線：<a href="app.html" style="color:var(--blue-dk);">app.html</a></footer>
 
 <script>
 function switchTab(name, btn) {

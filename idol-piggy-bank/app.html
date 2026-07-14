@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>愛豆存錢罐 🐷</title>
+<style>
+  :root {
+    --ink: #1e1b4b;
+    --pastel: #fdf1f7;
+    --pastel2: #fff9fc;
+    --accent: #ff8fcf;
+    --accent-dk: #c2367e;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+    background: var(--pastel); color: var(--ink); min-height: 100%;
+    transition: background 0.4s;
+  }
+  #frame { max-width: 440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+
+  /* ===== Y2K sticker primitives ===== */
+  .sticker { background: var(--white); border: 2.5px solid var(--ink); border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); }
+  .sticker-sm { background: var(--white); border: 2px solid var(--ink); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); }
+  .btn { display: inline-block; background: var(--white); border: 2.5px solid var(--ink); border-radius: 12px; box-shadow: 3px 3px 0 var(--ink); padding: 10px 18px; font-size: 15px; font-weight: 800; color: var(--ink); cursor: pointer; transition: transform 0.08s, box-shadow 0.08s; text-align: center; font-family: inherit; }
+  .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn.primary { background: var(--accent); }
+  .btn.small { padding: 6px 12px; font-size: 13px; border-width: 2px; border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); }
+  .btn.ghost { background: var(--pastel2); box-shadow: none; border-style: dashed; }
+  .num { font-variant-numeric: tabular-nums; }
+  .muted { opacity: 0.62; }
+  input, select { font-family: inherit; font-size: 15px; color: var(--ink); background: var(--white); border: 2px solid var(--ink); border-radius: 10px; padding: 9px 12px; width: 100%; font-weight: 600; }
+  input:focus, select:focus { outline: 3px solid var(--accent); }
+  label { display: block; font-size: 12.5px; font-weight: 800; margin: 14px 0 5px; letter-spacing: 0.4px; }
+
+  /* ===== screens ===== */
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+  .view { display: none; padding: 16px 16px 96px; }
+  .view.active { display: block; }
+
+  /* ===== onboarding ===== */
+  #onboarding { padding: 28px 20px 40px; }
+  #onboarding h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.3px; }
+  #onboarding .step-tag { display: inline-block; background: var(--ink); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 99px; margin-bottom: 10px; }
+  .ob-card { margin-top: 18px; padding: 18px; }
+  .emoji-row, .swatch-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .emoji-opt { width: 44px; height: 44px; font-size: 24px; display: flex; align-items: center; justify-content: center; background: var(--white); border: 2px solid var(--ink); border-radius: 12px; cursor: pointer; }
+  .emoji-opt.sel { background: var(--accent); box-shadow: 2px 2px 0 var(--ink); }
+  .color-opt { width: 36px; height: 36px; border: 2px solid var(--ink); border-radius: 10px; cursor: pointer; position: relative; }
+  .color-opt.sel::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; text-shadow: 0 0 3px rgba(0,0,0,0.6); }
+  .tmpl-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1.5px dashed rgba(30,27,75,0.2); }
+  .tmpl-row:last-child { border-bottom: none; }
+  .tmpl-row .t-icon { font-size: 20px; width: 28px; text-align: center; }
+  .tmpl-row .t-name { flex: 1; font-size: 14px; font-weight: 700; }
+  .tmpl-row input { width: 88px; text-align: right; padding: 6px 10px; font-weight: 800; }
+  .estimate-box { margin-top: 14px; padding: 12px 14px; background: var(--pastel2); border: 2px dashed var(--ink); border-radius: 12px; font-size: 13px; font-weight: 700; }
+  input[type=range] { border: none; padding: 0; height: 34px; accent-color: var(--accent-dk); background: transparent; }
+
+  /* ===== app header ===== */
+  #appbar { position: sticky; top: 0; z-index: 50; background: var(--pastel); padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+  #idol-chip { flex: 1; display: flex; align-items: center; gap: 8px; padding: 8px 14px; cursor: pointer; }
+  #idol-chip .emoji { font-size: 20px; }
+  #idol-chip .name { font-weight: 900; font-size: 15px; }
+  #idol-chip .arrow { margin-left: auto; font-size: 12px; opacity: 0.5; }
+  #btn-rules { width: 42px; height: 42px; font-size: 19px; padding: 0; line-height: 38px; }
+
+  /* ===== home ===== */
+  #jar-card { padding: 20px 18px 18px; text-align: center; position: relative; overflow: hidden; }
+  #jar-emoji { font-size: 52px; filter: drop-shadow(2px 2px 0 rgba(30,27,75,0.25)); }
+  #jar-total { display: inline-block; font-size: 30px; font-weight: 900; letter-spacing: -0.5px; background: var(--white); border: 2.5px solid var(--ink); border-radius: 12px; box-shadow: 3px 3px 0 var(--ink); padding: 4px 16px; margin-top: 6px; }
+  #goal-line { margin-top: 12px; font-size: 12.5px; font-weight: 800; }
+  .pbar { height: 14px; background: var(--white); border: 2px solid var(--ink); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .pbar > div { height: 100%; background: repeating-linear-gradient(45deg, var(--accent) 0 8px, var(--pastel) 8px 16px); border-right: 2px solid var(--ink); transition: width 0.5s cubic-bezier(.34,1.56,.64,1); }
+  #event-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .ev-btn { padding: 12px 10px; text-align: left; position: relative; }
+  .ev-btn .e-icon { font-size: 22px; }
+  .ev-btn .e-name { display: block; font-size: 13px; font-weight: 800; margin-top: 4px; line-height: 1.3; }
+  .ev-btn .e-amt { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 900; background: var(--pastel); border: 1.5px solid var(--ink); border-radius: 99px; padding: 1px 9px; }
+  .float-amt { position: absolute; right: 10px; top: 6px; font-weight: 900; color: var(--accent-dk); animation: floatUp 0.9s ease-out forwards; pointer-events: none; font-size: 15px; }
+  @keyframes floatUp { 0% { opacity: 0; transform: translateY(6px) scale(0.7);} 25% {opacity: 1; transform: translateY(-2px) scale(1.15);} 100% { opacity: 0; transform: translateY(-26px) scale(1);} }
+  #recent { margin-top: 18px; }
+  .sec-title { font-size: 13px; font-weight: 900; letter-spacing: 0.5px; margin: 18px 0 8px; display: flex; align-items: center; justify-content: space-between; }
+  .entry-row { display: flex; align-items: center; gap: 9px; padding: 9px 12px; margin-bottom: 8px; font-size: 13.5px; }
+  .entry-row .when { font-size: 11px; opacity: 0.55; font-weight: 700; width: 68px; }
+  .entry-row .what { flex: 1; font-weight: 700; }
+  .entry-row .amt { font-weight: 900; }
+  .entry-row .undo { font-size: 11px; font-weight: 800; color: var(--accent-dk); cursor: pointer; border: none; background: none; font-family: inherit; }
+
+  /* ===== history ===== */
+  .month-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 14px; }
+  .month-nav .btn { padding: 4px 12px; }
+  #month-label { font-weight: 900; font-size: 16px; }
+  #hist-stats { padding: 14px 16px; }
+  #hist-stats .big { font-size: 22px; font-weight: 900; }
+  .count-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .count-chip { font-size: 11.5px; font-weight: 800; background: var(--pastel2); border: 1.5px solid var(--ink); border-radius: 99px; padding: 3px 10px; }
+  .day-head { font-size: 12px; font-weight: 900; opacity: 0.6; margin: 14px 0 6px; }
+  .entry-row .del { font-size: 13px; cursor: pointer; border: none; background: none; opacity: 0.45; }
+
+  /* ===== goals ===== */
+  #goal-card { padding: 18px; }
+  #goal-card h3 { font-size: 17px; font-weight: 900; }
+  .goal-meta { font-size: 12.5px; font-weight: 700; margin-top: 8px; }
+  .ach-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: 13.5px; }
+  .ach-row .t { flex: 1; font-weight: 800; }
+  .ach-row .d { font-size: 11px; opacity: 0.55; font-weight: 700; }
+
+  /* ===== rules & settings ===== */
+  .rule-row { display: flex; align-items: center; gap: 9px; padding: 9px 12px; margin-bottom: 9px; }
+  .rule-row .r-icon { font-size: 19px; }
+  .rule-row .r-name { flex: 1; font-size: 13.5px; font-weight: 800; }
+  .rule-row input { width: 84px; text-align: right; padding: 5px 9px; font-weight: 800; font-size: 14px; }
+  .rule-row .arch { font-size: 12px; border: none; background: none; cursor: pointer; opacity: 0.5; font-family: inherit; font-weight: 800; }
+  .idol-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; margin-bottom: 9px; }
+  .idol-row .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ink); }
+  .idol-row .n { flex: 1; font-weight: 800; font-size: 14.5px; }
+  .suggest-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+  .suggest-chips .btn { font-size: 12px; padding: 5px 10px; box-shadow: 2px 2px 0 var(--ink); }
+
+  /* ===== bottom nav ===== */
+  #nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 440px; display: flex; background: var(--white); border-top: 2.5px solid var(--ink); z-index: 60; }
+  #nav button { flex: 1; padding: 10px 0 max(10px, env(safe-area-inset-bottom)); border: none; background: none; font-family: inherit; font-size: 10.5px; font-weight: 800; color: var(--ink); opacity: 0.45; cursor: pointer; }
+  #nav button .nico { display: block; font-size: 20px; margin-bottom: 2px; }
+  #nav button.on { opacity: 1; }
+
+  /* ===== toast / celebrate / modal ===== */
+  #toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 13px; font-weight: 800; padding: 9px 18px; border-radius: 99px; opacity: 0; transition: opacity 0.25s; z-index: 99; pointer-events: none; white-space: nowrap; }
+  #celebrate { position: fixed; inset: 0; background: var(--pastel); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align: center; padding: 30px; overflow: hidden; }
+  #celebrate.show { display: flex; }
+  #celebrate h2 { font-size: 26px; font-weight: 900; margin: 14px 0 6px; }
+  #celebrate .amt { font-size: 30px; font-weight: 900; background: var(--white); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); padding: 6px 22px; margin: 10px 0 22px; }
+  .confetti { position: absolute; top: -40px; font-size: 22px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+  .modal-bg { position: fixed; inset: 0; background: rgba(30,27,75,0.45); display: none; align-items: flex-end; justify-content: center; z-index: 90; }
+  .modal-bg.show { display: flex; }
+  .modal { width: 100%; max-width: 440px; background: var(--pastel2); border-top: 3px solid var(--ink); border-radius: 22px 22px 0 0; padding: 20px 20px 34px; max-height: 82vh; overflow-y: auto; }
+  .modal h3 { font-size: 17px; font-weight: 900; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div id="frame">
+
+  <!-- ============ ONBOARDING ============ -->
+  <div id="onboarding" class="screen">
+    <div id="ob-step1">
+      <span class="step-tag">STEP 1 / 2</span>
+      <h1>建立你的第一個<br>愛豆存錢罐 🐷</h1>
+      <div class="ob-card sticker">
+        <label>偶像名字 / 暱稱</label>
+        <input id="ob-name" placeholder="例如：阿圓" maxlength="12">
+        <label>選個代表 emoji</label>
+        <div class="emoji-row" id="ob-emojis"></div>
+        <label>應援色（整個 app 會跟著換色！）</label>
+        <div class="swatch-row" id="ob-colors"></div>
+        <label>幣別</label>
+        <select id="ob-currency">
+          <option value="NT$">NT$ 新台幣</option><option value="₩">₩ 韓元</option>
+          <option value="¥">¥ 日圓</option><option value="US$">US$ 美元</option><option value="RM">RM 馬幣</option>
+        </select>
+        <div style="margin-top:20px;"><button class="btn primary" style="width:100%;" onclick="obNext()">下一步 →</button></div>
+      </div>
+    </div>
+    <div id="ob-step2" style="display:none;">
+      <span class="step-tag">STEP 2 / 2</span>
+      <h1>存錢規則 💸</h1>
+      <p style="font-size:13px; font-weight:700; margin-top:6px;" class="muted">偶像每「營業」一次就存對應金額。已套用預設模板，單價都可以改。</p>
+      <div class="ob-card sticker">
+        <div id="ob-tmpl"></div>
+        <label>整體強度（倍率滑桿）：<span id="ob-mult-label" class="num">×1.0</span></label>
+        <input type="range" id="ob-mult" min="0.2" max="3" step="0.1" value="1" oninput="obEstimate()">
+        <div class="estimate-box">📊 依你偶像的參考營業頻率，這套規則<br>預估每月存 <span id="ob-est" class="num" style="font-size:17px;">—</span></div>
+        <div style="margin-top:18px; display:flex; gap:10px;">
+          <button class="btn" onclick="obBack()">← 上一步</button>
+          <button class="btn primary" style="flex:1;" onclick="obFinish()">開始存錢！🎉</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MAIN APP ============ -->
+  <div id="app" class="screen">
+    <div id="appbar">
+      <div id="idol-chip" class="sticker-sm" onclick="openIdolSwitcher()">
+        <span class="emoji" id="bar-emoji">🐰</span><span class="name" id="bar-name">—</span><span class="arrow">▼</span>
+      </div>
+      <button id="btn-rules" class="btn" title="規則設定" onclick="showView('rules')">⚙️</button>
+    </div>
+
+    <!-- HOME -->
+    <div id="view-home" class="view">
+      <div id="jar-card" class="sticker">
+        <div id="jar-emoji">🐷</div>
+        <div id="jar-total" class="num">NT$ 0</div>
+        <div id="goal-line"></div>
+        <div class="pbar" id="home-pbar" style="display:none;"><div style="width:0%"></div></div>
+      </div>
+      <div class="sec-title">✨ 他營業了嗎？點一下就存</div>
+      <div id="event-grid"></div>
+      <div id="recent">
+        <div class="sec-title">最近紀錄 <span class="muted" style="font-weight:700; font-size:11px;">點「紀錄」看全部</span></div>
+        <div id="recent-list"></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="view-history" class="view">
+      <div class="month-nav">
+        <button class="btn small" onclick="moveMonth(-1)">‹</button>
+        <span id="month-label" class="num">—</span>
+        <button class="btn small" onclick="moveMonth(1)">›</button>
+      </div>
+      <div id="hist-stats" class="sticker"></div>
+      <div style="margin-top:14px;"><button class="btn ghost" style="width:100%;" onclick="openBackfill()">＋ 補記過去的營業</button></div>
+      <div id="hist-list"></div>
+    </div>
+
+    <!-- GOALS -->
+    <div id="view-goals" class="view">
+      <div id="goal-area"></div>
+      <div class="sec-title">🏆 成就牆</div>
+      <div id="ach-list"></div>
+    </div>
+
+    <!-- RULES -->
+    <div id="view-rules" class="view">
+      <div class="sec-title">⚙️ 事件規則（<span id="rules-cur"></span> / 次）</div>
+      <div id="rules-list"></div>
+      <div class="sec-title" style="margin-top:20px;">➕ 新增事件</div>
+      <div class="sticker" style="padding:14px;">
+        <div style="display:flex; gap:8px;">
+          <input id="new-ev-icon" placeholder="🎤" maxlength="4" style="width:64px; text-align:center;">
+          <input id="new-ev-name" placeholder="事件名稱" style="flex:1;">
+          <input id="new-ev-amt" type="number" placeholder="單價" style="width:84px;">
+        </div>
+        <button class="btn small primary" style="margin-top:10px;" onclick="addEventType()">新增</button>
+        <div class="muted" style="font-size:11.5px; font-weight:700; margin-top:12px;">從擴充事件庫快速加入：</div>
+        <div class="suggest-chips" id="suggest-chips"></div>
+      </div>
+      <div class="sec-title" style="margin-top:20px;">🎚️ 倍率滑桿</div>
+      <div class="sticker" style="padding:14px;">
+        <input type="range" id="rules-mult" min="0.2" max="3" step="0.1" value="1" oninput="rulesEstimate()">
+        <div class="estimate-box">整體 <b id="rules-mult-label" class="num">×1.0</b> → 預估每月存 <b id="rules-est" class="num">—</b><br><span class="muted" style="font-weight:700; font-size:11.5px;">依近 30 天實際頻率（不足時用參考頻率）</span></div>
+        <button class="btn small" style="margin-top:10px;" onclick="applyMultiplier()">套用倍率到所有單價</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="view-settings" class="view">
+      <div class="sec-title">💖 我的偶像</div>
+      <div id="idol-list"></div>
+      <button class="btn ghost" style="width:100%;" onclick="startAddIdol()">＋ 新增偶像（多擔福音）</button>
+      <div class="sec-title" style="margin-top:22px;">🧰 資料</div>
+      <button class="btn" style="width:100%; margin-bottom:10px;" onclick="exportCSV()">匯出紀錄 CSV</button>
+      <button class="btn" style="width:100%;" onclick="wipeAll()">清除所有資料</button>
+      <p class="muted" style="font-size:11.5px; font-weight:700; margin-top:18px; line-height:1.7;">愛豆存錢罐 · 原型 P1 · 資料只存在這台裝置的瀏覽器裡（localStorage），不上傳任何伺服器。存錢罐是「承諾記錄」，記得對應到你的實體撲滿或銀行帳戶 🐷</p>
+    </div>
+
+    <div id="nav">
+      <button id="nav-home" class="on" onclick="showView('home')"><span class="nico">🏠</span>首頁</button>
+      <button id="nav-history" onclick="showView('history')"><span class="nico">📒</span>紀錄</button>
+      <button id="nav-goals" onclick="showView('goals')"><span class="nico">🎯</span>目標</button>
+      <button id="nav-settings" onclick="showView('settings')"><span class="nico">⚙️</span>設定</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="celebrate" onclick="closeCelebrate()">
+  <div style="font-size:60px;">🎊</div>
+  <h2 id="cel-title">目標達成！</h2>
+  <div class="amt num" id="cel-amt"></div>
+  <div style="font-weight:800; font-size:14px;">「我靠他存到的。」<br><span class="muted" style="font-size:12px;">點任意處關閉</span></div>
+</div>
+
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<script>
+/* ================= state ================= */
+const LS_KEY = 'ipb_v1';
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+let S = load();
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(LS_KEY)); if (s && s.schemaVersion === 1) return s; } catch (e) {}
+  return { schemaVersion: 1, onboarded: false, activeIdolId: null, idols: [], eventTypes: [], entries: [], goals: [] };
+}
+function save() { localStorage.setItem(LS_KEY, JSON.stringify(S)); }
+
+const TEMPLATE = [
+  { icon: '📝', name: 'Weverse 發文', amount: 50,   refFreq: 7.8 },
+  { icon: '💬', name: 'Weverse 留言', amount: 30,   refFreq: 8.7 },
+  { icon: '🔴', name: '直播',         amount: 300,  refFreq: 0.8 },
+  { icon: '📷', name: 'IG 發文',      amount: 100,  refFreq: 2.5 },
+  { icon: '📸', name: 'IG 限時動態',  amount: 30,   refFreq: 15.3 },
+  { icon: '💭', name: 'IG 留言',      amount: 15,   refFreq: 3.1 },
+  { icon: '🎵', name: 'Challenge',    amount: 200,  refFreq: 2.2 },
+  { icon: '📺', name: '節目（主持/來賓）', amount: 1000, refFreq: 2.4 },
+];
+const SUGGESTS = [
+  { icon: '🫧', name: '泡泡/DM 私訊', amount: 15 }, { icon: '🐦', name: 'X 發文', amount: 30 },
+  { icon: '🎬', name: 'TikTok 發文', amount: 30 }, { icon: '🎤', name: '打歌舞台', amount: 100 },
+  { icon: '📹', name: 'Vlog', amount: 200 }, { icon: '📻', name: '電台/Podcast', amount: 200 },
+  { icon: '🏷️', name: '代言官宣', amount: 300 }, { icon: '🎞️', name: 'MV 公開', amount: 500 },
+  { icon: '🥇', name: '音樂節目一位', amount: 500 }, { icon: '📀', name: '新專輯發行', amount: 1000 },
+  { icon: '🏆', name: '頒獎典禮得獎', amount: 1000 }, { icon: '🎂', name: '生日/週年', amount: 1000 },
+  { icon: '💘', name: '心動就存', amount: 100 }, { icon: '🎫', name: '搶票失敗罰存', amount: 500 },
+];
+const EMOJIS = ['🐰','🐻','🐱','🦊','🐧','🦁','🐹','🍑','⭐️','💜'];
+const COLORS = ['#ff8fcf','#ff6b6b','#ff9f43','#feca57','#1dd1a1','#00d2d3','#54a0ff','#5f27cd','#c8d6e5','#222f3e'];
+
+/* ================= theme engine (style D) ================= */
+function hexToHsl(hex) {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let h = 0, s = 0; const l = (mx + mn) / 2;
+  if (mx !== mn) { const d = mx - mn; s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+  return [h, s, l];
+}
+function applyTheme(color) {
+  const [h, s] = hexToHsl(color); const r = document.documentElement.style;
+  r.setProperty('--accent', color);
+  r.setProperty('--pastel', `hsl(${h}, ${Math.min(s * 100 * 0.55, 52)}%, 91%)`);
+  r.setProperty('--pastel2', `hsl(${h}, ${Math.min(s * 100 * 0.5, 45)}%, 96.5%)`);
+  r.setProperty('--accent-dk', `hsl(${h}, ${Math.max(s * 100, 45)}%, 34%)`);
+}
+
+/* ================= helpers ================= */
+const idol = () => S.idols.find(i => i.id === S.activeIdolId);
+const evTypes = (all) => S.eventTypes.filter(e => e.idolId === S.activeIdolId && (all || !e.archived)).sort((a, b) => a.sortOrder - b.sortOrder);
+const entries = () => S.entries.filter(e => e.idolId === S.activeIdolId);
+const total = () => entries().reduce((a, e) => a + e.amount, 0);
+const fmt = (n) => (idol() ? idol().currency : 'NT$') + ' ' + Math.round(n).toLocaleString();
+const evById = (id) => S.eventTypes.find(e => e.id === id);
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.opacity = 1; clearTimeout(t._h); t._h = setTimeout(() => t.style.opacity = 0, 1600); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function monthlyEstimate(mult) {
+  const now = Date.now(), M30 = 30 * 864e5;
+  return evTypes().reduce((sum, ev) => {
+    const c30 = entries().filter(e => e.eventTypeId === ev.id && now - new Date(e.occurredAt).getTime() < M30).length;
+    const freq = c30 > 0 ? c30 : (ev.refFreq || 0);
+    return sum + freq * ev.amount * mult;
+  }, 0);
+}
+
+/* ================= onboarding ================= */
+let ob = { emoji: EMOJIS[0], color: COLORS[0] };
+function renderOb() {
+  document.getElementById('ob-emojis').innerHTML = EMOJIS.map(e =>
+    `<div class="emoji-opt ${e === ob.emoji ? 'sel' : ''}" onclick="ob.emoji='${e}';renderOb()">${e}</div>`).join('');
+  document.getElementById('ob-colors').innerHTML = COLORS.map(c =>
+    `<div class="color-opt ${c === ob.color ? 'sel' : ''}" style="background:${c}" onclick="ob.color='${c}';applyTheme('${c}');renderOb()"></div>`).join('')
+    + `<input type="color" value="${ob.color}" style="width:36px;height:36px;padding:0;border-radius:10px;" onchange="ob.color=this.value;applyTheme(this.value)">`;
+}
+function obNext() {
+  const name = document.getElementById('ob-name').value.trim();
+  if (!name) return toast('先幫偶像取個名字吧！');
+  ob.name = name;
+  document.getElementById('ob-step1').style.display = 'none';
+  document.getElementById('ob-step2').style.display = 'block';
+  document.getElementById('ob-tmpl').innerHTML = TEMPLATE.map((t, i) =>
+    `<div class="tmpl-row"><span class="t-icon">${t.icon}</span><span class="t-name">${t.name}</span><input type="number" id="tmpl-${i}" value="${t.amount}" oninput="obEstimate()"></div>`).join('');
+  obEstimate();
+}
+function obBack() { document.getElementById('ob-step1').style.display = 'block'; document.getElementById('ob-step2').style.display = 'none'; }
+function obEstimate() {
+  const m = parseFloat(document.getElementById('ob-mult').value);
+  document.getElementById('ob-mult-label').textContent = '×' + m.toFixed(1);
+  const est = TEMPLATE.reduce((s, t, i) => s + t.refFreq * (parseInt(document.getElementById('tmpl-' + i).value) || 0) * m, 0);
+  const cur = document.getElementById('ob-currency').value;
+  document.getElementById('ob-est').textContent = cur + ' ' + Math.round(est).toLocaleString();
+}
+function obFinish() {
+  const m = parseFloat(document.getElementById('ob-mult').value);
+  const id = uid();
+  S.idols.push({ id, name: ob.name, emoji: ob.emoji, color: ob.color, currency: document.getElementById('ob-currency').value, createdAt: new Date().toISOString() });
+  TEMPLATE.forEach((t, i) => {
+    const amt = Math.max(1, Math.round((parseInt(document.getElementById('tmpl-' + i).value) || t.amount) * m));
+    S.eventTypes.push({ id: uid(), idolId: id, name: t.name, icon: t.icon, amount: amt, refFreq: t.refFreq, sortOrder: i, archived: false });
+  });
+  S.activeIdolId = id; S.onboarded = true; save();
+  enterApp(); toast(`${ob.emoji} ${ob.name} 的存錢罐開張！`);
+}
+function startAddIdol() {
+  ob = { emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)], color: COLORS[Math.floor(Math.random() * 8)] };
+  document.getElementById('ob-name').value = '';
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('onboarding').classList.add('active');
+  obBack(); renderOb(); applyTheme(ob.color);
+}
+
+/* ================= views ================= */
+function enterApp() {
+  document.getElementById('onboarding').classList.remove('active');
+  document.getElementById('app').classList.add('active');
+  applyTheme(idol().color);
+  showView('home');
+}
+let curView = 'home';
+function showView(v) {
+  curView = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('on'));
+  const nb = document.getElementById('nav-' + v); if (nb) nb.classList.add('on');
+  ({ home: renderHome, history: renderHistory, goals: renderGoals, rules: renderRules, settings: renderSettings })[v]();
+  document.getElementById('bar-emoji').textContent = idol().emoji;
+  document.getElementById('bar-name').textContent = idol().name;
+  window.scrollTo({ top: 0 });
+}
+
+/* ---- home ---- */
+function renderHome() {
+  document.getElementById('jar-total').textContent = fmt(total());
+  const g = activeGoal();
+  const gl = document.getElementById('goal-line'), pb = document.getElementById('home-pbar');
+  if (g) {
+    const p = goalPct(g);
+    gl.innerHTML = `🎯 ${esc(g.title)}　<b class="num">${p}%</b>`;
+    pb.style.display = 'block'; pb.firstElementChild.style.width = p + '%';
+  } else { gl.innerHTML = `<span class="muted">還沒有目標——去「目標」頁設一個吧</span>`; pb.style.display = 'none'; }
+  document.getElementById('event-grid').innerHTML = evTypes().map(ev =>
+    `<button class="btn ev-btn" onclick="quickAdd('${ev.id}', this)"><span class="e-icon">${ev.icon}</span><span class="e-name">${esc(ev.name)}</span><span class="e-amt num">+${ev.amount}</span></button>`).join('');
+  renderRecent();
+}
+function renderRecent() {
+  const list = entries().slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3);
+  document.getElementById('recent-list').innerHTML = list.length ? list.map((e, i) => {
+    const ev = evById(e.eventTypeId);
+    return `<div class="entry-row sticker-sm"><span class="when">${timeAgo(e.createdAt)}</span><span class="what">${ev ? ev.icon + ' ' + esc(ev.name) : '—'}</span><span class="amt num">+${e.amount}</span>${i === 0 ? `<button class="undo" onclick="undoEntry('${e.id}')">↩︎ 撤銷</button>` : ''}</div>`;
+  }).join('') : `<div class="muted" style="font-size:13px; font-weight:700;">還沒有紀錄——他一營業就點上面的按鈕！</div>`;
+}
+function timeAgo(iso) {
+  const s = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (s < 60) return '剛剛'; if (s < 3600) return Math.floor(s / 60) + ' 分鐘前';
+  if (s < 86400) return Math.floor(s / 3600) + ' 小時前'; return new Date(iso).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' });
+}
+function quickAdd(evId, btn) {
+  const ev = evById(evId);
+  const now = new Date().toISOString();
+  S.entries.push({ id: uid(), idolId: S.activeIdolId, eventTypeId: evId, amount: ev.amount, occurredAt: now, createdAt: now, note: '' });
+  save();
+  const f = document.createElement('span'); f.className = 'float-amt'; f.textContent = '+' + ev.amount;
+  btn.appendChild(f); setTimeout(() => f.remove(), 900);
+  document.getElementById('jar-total').textContent = fmt(total());
+  const g = activeGoal();
+  if (g) {
+    const p = goalPct(g);
+    document.getElementById('home-pbar').firstElementChild.style.width = p + '%';
+    document.getElementById('goal-line').innerHTML = `🎯 ${esc(g.title)}　<b class="num">${p}%</b>`;
+    if (p >= 100 && !g.achievedAt) achieveGoal(g);
+  }
+  renderRecent();
+}
+function undoEntry(id) { S.entries = S.entries.filter(e => e.id !== id); save(); renderHome(); toast('已撤銷'); }
+
+/* ---- goals ---- */
+const activeGoal = () => S.goals.find(g => g.idolId === S.activeIdolId && !g.achievedAt);
+const goalPct = (g) => Math.min(100, Math.floor((total() - g.baseAmount) / g.targetAmount * 100));
+function renderGoals() {
+  const g = activeGoal(); const area = document.getElementById('goal-area');
+  if (g) {
+    const saved = total() - g.baseAmount, p = goalPct(g);
+    const M30 = 30 * 864e5, rate = entries().filter(e => Date.now() - new Date(e.occurredAt).getTime() < M30).reduce((a, e) => a + e.amount, 0);
+    const remain = Math.max(0, g.targetAmount - saved);
+    const eta = rate > 0 ? Math.ceil(remain / (rate / 30)) : null;
+    area.innerHTML = `<div id="goal-card" class="sticker">
+      <h3>🎯 ${esc(g.title)}</h3>
+      <div class="pbar" style="margin-top:12px;"><div style="width:${p}%"></div></div>
+      <div class="goal-meta num">${fmt(saved)} / ${fmt(g.targetAmount)}（${p}%）</div>
+      <div class="goal-meta">還差 <b class="num">${fmt(remain)}</b>${eta ? `，照近 30 天的存錢速度約 <b>${eta} 天</b>後見到他 💨` : ''}${g.deadline ? `<br>期限：${g.deadline}` : ''}</div>
+      <div style="margin-top:14px; display:flex; gap:8px;">
+        <button class="btn small" onclick="editGoal()">改金額/名稱</button>
+        <button class="btn small" onclick="deleteGoal()">刪除目標</button>
+      </div></div>`;
+  } else {
+    area.innerHTML = `<div class="sticker" style="padding:18px;">
+      <h3 style="font-size:16px; font-weight:900;">設一個目標吧 🎯</h3>
+      <p class="muted" style="font-size:12.5px; font-weight:700; margin-top:4px;">演唱會門票、周邊、遠征基金⋯目標會以進度條顯示在首頁（從現在開始的存入起算）。</p>
+      <label>目標名稱</label><input id="g-title" placeholder="例如：安可場門票">
+      <label>目標金額</label><input id="g-amt" type="number" placeholder="8800">
+      <label>期限（選填）</label><input id="g-dl" type="date">
+      <button class="btn primary" style="width:100%; margin-top:16px;" onclick="createGoal()">開始為它存錢！</button></div>`;
+  }
+  const ach = S.goals.filter(g2 => g2.idolId === S.activeIdolId && g2.achievedAt);
+  document.getElementById('ach-list').innerHTML = ach.length ? ach.map(a =>
+    `<div class="ach-row sticker-sm"><span>🏅</span><span class="t">${esc(a.title)}</span><span class="num" style="font-weight:900;">${fmt(a.targetAmount)}</span><span class="d">${a.achievedAt.slice(0, 10)}</span></div>`).join('')
+    : `<div class="muted" style="font-size:12.5px; font-weight:700;">達成的目標會掛在這面牆上 ✨</div>`;
+}
+function createGoal() {
+  const t = document.getElementById('g-title').value.trim(), a = parseInt(document.getElementById('g-amt').value);
+  if (!t || !a || a <= 0) return toast('名稱和金額都要填喔');
+  S.goals.push({ id: uid(), idolId: S.activeIdolId, title: t, targetAmount: a, deadline: document.getElementById('g-dl').value || null, baseAmount: total(), achievedAt: null });
+  save(); renderGoals(); toast('目標設定完成！🎯');
+}
+function editGoal() {
+  const g = activeGoal();
+  const t = prompt('目標名稱', g.title); if (t === null) return;
+  const a = prompt('目標金額', g.targetAmount); if (a === null) return;
+  g.title = t.trim() || g.title; g.targetAmount = parseInt(a) || g.targetAmount; save(); renderGoals();
+  if (goalPct(g) >= 100) achieveGoal(g);
+}
+function deleteGoal() { if (!confirm('確定刪除這個目標？（存款不會消失）')) return; S.goals = S.goals.filter(g => g !== activeGoal()); save(); renderGoals(); }
+function achieveGoal(g) {
+  g.achievedAt = new Date().toISOString(); save();
+  document.getElementById('cel-title').textContent = `「${g.title}」達成！`;
+  document.getElementById('cel-amt').textContent = fmt(g.targetAmount);
+  const cel = document.getElementById('celebrate'); cel.classList.add('show');
+  const em = ['🎉','✨','💖','⭐️','🎊','🩷'];
+  for (let i = 0; i < 26; i++) { const c = document.createElement('span'); c.className = 'confetti';
+    c.textContent = em[i % em.length]; c.style.left = Math.random() * 100 + '%';
+    c.style.animationDuration = (2 + Math.random() * 2.5) + 's'; c.style.animationDelay = (Math.random() * 0.8) + 's';
+    cel.appendChild(c); }
+}
+function closeCelebrate() { const c = document.getElementById('celebrate'); c.classList.remove('show'); c.querySelectorAll('.confetti').forEach(e => e.remove()); if (curView === 'goals' || curView === 'home') showView(curView); }
+
+/* ---- history ---- */
+let histMonth = new Date();
+function moveMonth(d) { histMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() + d, 1); renderHistory(); }
+function renderHistory() {
+  const y = histMonth.getFullYear(), m = histMonth.getMonth();
+  document.getElementById('month-label').textContent = `${y} 年 ${m + 1} 月`;
+  const list = entries().filter(e => { const d = new Date(e.occurredAt); return d.getFullYear() === y && d.getMonth() === m; })
+    .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
+  const sum = list.reduce((a, e) => a + e.amount, 0);
+  const counts = {};
+  list.forEach(e => { const ev = evById(e.eventTypeId); const k = ev ? ev.icon + ' ' + ev.name : '—'; counts[k] = (counts[k] || 0) + 1; });
+  document.getElementById('hist-stats').innerHTML =
+    `<div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="font-weight:800; font-size:12.5px;">本月總記錄 <b class="big num">${list.length}</b> 次</span><span class="big num">${fmt(sum)}</span></div>
+     <div class="count-grid">${Object.entries(counts).map(([k, v]) => `<span class="count-chip">${esc(k)} ×${v}</span>`).join('') || '<span class="muted" style="font-size:12px; font-weight:700;">這個月還沒有紀錄</span>'}</div>`;
+  let html = '', lastDay = '';
+  list.forEach(e => {
+    const day = e.occurredAt.slice(0, 10);
+    if (day !== lastDay) { html += `<div class="day-head">${day.slice(5).replace('-', '/')}</div>`; lastDay = day; }
+    const ev = evById(e.eventTypeId);
+    html += `<div class="entry-row sticker-sm"><span class="what">${ev ? ev.icon + ' ' + esc(ev.name) : '—'}${e.note ? `<span class="muted" style="font-size:11px;"> · ${esc(e.note)}</span>` : ''}</span><span class="amt num">+${e.amount}</span><button class="del" onclick="delEntry('${e.id}')">🗑</button></div>`;
+  });
+  document.getElementById('hist-list').innerHTML = html;
+}
+function delEntry(id) { if (!confirm('刪除這筆紀錄？')) return; S.entries = S.entries.filter(e => e.id !== id); save(); renderHistory(); }
+function openBackfill() {
+  openModal(`<h3>補記過去的營業 ✏️</h3>
+    <label>事件</label><select id="bf-ev">${evTypes().map(ev => `<option value="${ev.id}">${ev.icon} ${esc(ev.name)}（+${ev.amount}）</option>`).join('')}</select>
+    <label>日期</label><input type="date" id="bf-date" value="${new Date().toISOString().slice(0, 10)}">
+    <label>備註（選填，例如「回歸直播！」）</label><input id="bf-note" maxlength="30">
+    <button class="btn primary" style="width:100%; margin-top:16px;" onclick="doBackfill()">補記</button>`);
+}
+function doBackfill() {
+  const evId = document.getElementById('bf-ev').value, d = document.getElementById('bf-date').value;
+  if (!d) return toast('要選日期喔');
+  S.entries.push({ id: uid(), idolId: S.activeIdolId, eventTypeId: evId, amount: evById(evId).amount, occurredAt: d + 'T12:00:00.000Z', createdAt: new Date().toISOString(), note: document.getElementById('bf-note').value.trim() });
+  save(); closeModal(); histMonth = new Date(d); renderHistory(); toast('補記完成');
+}
+
+/* ---- rules ---- */
+function renderRules() {
+  document.getElementById('rules-cur').textContent = idol().currency;
+  document.getElementById('rules-list').innerHTML = evTypes(true).map(ev =>
+    `<div class="rule-row sticker-sm" style="${ev.archived ? 'opacity:0.45;' : ''}">
+      <span class="r-icon">${ev.icon}</span><span class="r-name">${esc(ev.name)}</span>
+      <input type="number" value="${ev.amount}" onchange="setAmount('${ev.id}', this.value)" ${ev.archived ? 'disabled' : ''}>
+      <button class="arch" onclick="toggleArch('${ev.id}')">${ev.archived ? '恢復' : '封存'}</button></div>`).join('');
+  document.getElementById('suggest-chips').innerHTML = SUGGESTS.map((s, i) =>
+    `<button class="btn" onclick="quickAddType(${i})">${s.icon} ${s.name} +${s.amount}</button>`).join('');
+  rulesEstimate();
+}
+function setAmount(id, v) { const ev = evById(id); ev.amount = Math.max(1, parseInt(v) || ev.amount); save(); renderRules(); toast('單價已更新（歷史紀錄不受影響）'); }
+function toggleArch(id) { const ev = evById(id); ev.archived = !ev.archived; save(); renderRules(); }
+function addEventType() {
+  const icon = document.getElementById('new-ev-icon').value.trim() || '⭐️';
+  const name = document.getElementById('new-ev-name').value.trim();
+  const amt = parseInt(document.getElementById('new-ev-amt').value);
+  if (!name || !amt) return toast('名稱和單價都要填');
+  S.eventTypes.push({ id: uid(), idolId: S.activeIdolId, name, icon, amount: amt, refFreq: 0, sortOrder: evTypes(true).length, archived: false });
+  save(); document.getElementById('new-ev-icon').value = ''; document.getElementById('new-ev-name').value = ''; document.getElementById('new-ev-amt').value = '';
+  renderRules(); toast('事件已新增');
+}
+function quickAddType(i) {
+  const s = SUGGESTS[i];
+  if (evTypes(true).some(e => e.name === s.name)) return toast('已經有這個事件了');
+  S.eventTypes.push({ id: uid(), idolId: S.activeIdolId, name: s.name, icon: s.icon, amount: s.amount, refFreq: 0, sortOrder: evTypes(true).length, archived: false });
+  save(); renderRules(); toast(`已加入「${s.name}」`);
+}
+function rulesEstimate() {
+  const m = parseFloat(document.getElementById('rules-mult').value);
+  document.getElementById('rules-mult-label').textContent = '×' + m.toFixed(1);
+  document.getElementById('rules-est').textContent = fmt(monthlyEstimate(m));
+}
+function applyMultiplier() {
+  const m = parseFloat(document.getElementById('rules-mult').value);
+  if (m === 1) return toast('倍率是 ×1.0，不用套用');
+  if (!confirm(`把所有單價 ×${m.toFixed(1)}？（只影響之後的紀錄）`)) return;
+  evTypes().forEach(ev => ev.amount = Math.max(1, Math.round(ev.amount * m)));
+  document.getElementById('rules-mult').value = 1; save(); renderRules(); toast('已套用新單價');
+}
+
+/* ---- settings & idols ---- */
+function renderSettings() {
+  document.getElementById('idol-list').innerHTML = S.idols.map(i =>
+    `<div class="idol-row sticker-sm"><span class="dot" style="background:${i.color}"></span><span style="font-size:19px;">${i.emoji}</span><span class="n">${esc(i.name)}${i.id === S.activeIdolId ? ' <span style="font-size:10px; background:var(--accent); border:1.5px solid var(--ink); border-radius:99px; padding:1px 7px;">使用中</span>' : ''}</span>
+    ${i.id !== S.activeIdolId ? `<button class="btn small" onclick="switchIdol('${i.id}')">切換</button>` : ''}
+    <button class="btn small" onclick="deleteIdol('${i.id}')">刪除</button></div>`).join('');
+}
+function switchIdol(id) { S.activeIdolId = id; save(); applyTheme(idol().color); showView(curView === 'settings' ? 'settings' : 'home'); toast(`已切換到 ${idol().emoji} ${idol().name}`); }
+function deleteIdol(id) {
+  const i = S.idols.find(x => x.id === id);
+  if (!confirm(`刪除「${i.name}」？其所有紀錄、規則、目標都會一併刪除！`)) return;
+  if (!confirm('真的確定嗎？此操作無法復原。')) return;
+  S.idols = S.idols.filter(x => x.id !== id);
+  S.eventTypes = S.eventTypes.filter(x => x.idolId !== id);
+  S.entries = S.entries.filter(x => x.idolId !== id);
+  S.goals = S.goals.filter(x => x.idolId !== id);
+  if (S.activeIdolId === id) S.activeIdolId = S.idols[0] ? S.idols[0].id : null;
+  save();
+  if (!S.activeIdolId) { S.onboarded = false; save(); location.reload(); return; }
+  applyTheme(idol().color); renderSettings();
+}
+function openIdolSwitcher() {
+  if (S.idols.length < 2) { showView('settings'); return; }
+  openModal(`<h3>切換偶像 💖</h3>` + S.idols.map(i =>
+    `<div class="idol-row sticker-sm" style="cursor:pointer; background:${i.id === S.activeIdolId ? 'var(--pastel)' : 'var(--white)'};" onclick="switchIdol('${i.id}');closeModal()"><span class="dot" style="background:${i.color}"></span><span style="font-size:19px;">${i.emoji}</span><span class="n">${esc(i.name)}</span><span class="num" style="font-weight:900;">${i.currency} ${S.entries.filter(e => e.idolId === i.id).reduce((a, e) => a + e.amount, 0).toLocaleString()}</span></div>`).join(''));
+}
+function exportCSV() {
+  const rows = [['日期', '事件', '金額', '備註']];
+  entries().sort((a, b) => a.occurredAt.localeCompare(b.occurredAt)).forEach(e => {
+    const ev = evById(e.eventTypeId);
+    rows.push([e.occurredAt.slice(0, 10), ev ? ev.name : '', e.amount, e.note || '']);
+  });
+  const csv = '﻿' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `${idol().name}-存錢紀錄.csv`; a.click();
+  toast('CSV 已匯出');
+}
+function wipeAll() {
+  if (!confirm('清除所有偶像與紀錄？此操作無法復原！')) return;
+  if (!confirm('最後確認：真的要全部刪除嗎？')) return;
+  localStorage.removeItem(LS_KEY); location.reload();
+}
+
+/* ---- modal ---- */
+function openModal(html) { document.getElementById('modal-body').innerHTML = html; document.getElementById('modal-bg').classList.add('show'); }
+function closeModal() { document.getElementById('modal-bg').classList.remove('show'); }
+
+/* ================= boot ================= */
+if (S.onboarded && S.idols.length) {
+  document.getElementById('app').classList.add('active');
+  applyTheme(idol().color); showView('home');
+} else {
+  document.getElementById('onboarding').classList.add('active');
+  renderOb(); applyTheme(ob.color);
+}
+</script>
+</body>
+</html>
