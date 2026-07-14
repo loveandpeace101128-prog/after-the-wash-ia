@@ -130,7 +130,7 @@
   <div class="top-bar-inner">
     <div>
       <h1>🐷 愛豆存錢罐 Idol Piggy Bank</h1>
-      <div class="subtitle">產品規劃文件 v1.4 · Phase 1 規劃階段 · 2026-07</div>
+      <div class="subtitle">產品規劃文件 v1.5 · 規劃拍板完成 · 2026-07</div>
     </div>
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('concept', this)"><span class="tab-num">1</span>概念與計價規則</button>
@@ -185,26 +185,57 @@
 
     <div class="card">
       <h3>📊 試算範例 — 以真實年度統計為例</h3>
-      <p class="muted">數據來源：用戶提供的 2026 年度偶像活動統計（原以 Google 表單手動記錄——正是本產品要取代的痛點）。單價為示範值。</p>
+      <p class="muted">數據來源：用戶提供的 2026 年度偶像活動統計（原以 Google 表單手動記錄——正是本產品要取代的痛點）。單價為 <b>v1.5 產品負責人拍板的預設模板出廠值</b>。</p>
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th>事件類型</th><th class="num">年度次數</th><th class="num">示範單價 (NT$)</th><th class="num">小計 (NT$)</th><th>備註</th></tr>
+            <tr><th>事件類型</th><th class="num">年度次數</th><th class="num">出廠單價 (NT$)</th><th class="num">小計 (NT$)</th><th>備註</th></tr>
           </thead>
           <tbody>
-            <tr><td>Weverse 發文</td><td class="num">94</td><td class="num">30</td><td class="num">2,820</td><td>本人發文，中頻率</td></tr>
-            <tr><td>Weverse 留言</td><td class="num">104</td><td class="num">10</td><td class="num">1,040</td><td>高頻日常互動，低單價</td></tr>
-            <tr><td>直播（團體＆個人）</td><td class="num">9</td><td class="num">100</td><td class="num">900</td><td>稀有事件，高單價</td></tr>
-            <tr><td>IG 發文</td><td class="num">30</td><td class="num">50</td><td class="num">1,500</td><td>正式發文</td></tr>
-            <tr><td>IG 限時動態</td><td class="num">183</td><td class="num">10</td><td class="num">1,830</td><td>最高頻事件，務必低單價</td></tr>
-            <tr><td>IG 留言</td><td class="num">37</td><td class="num">10</td><td class="num">370</td><td></td></tr>
-            <tr><td>Challenge</td><td class="num">26</td><td class="num">50</td><td class="num">1,300</td><td>含合作短影音</td></tr>
-            <tr><td>節目（主持／來賓）</td><td class="num">29</td><td class="num">100</td><td class="num">2,900</td><td>整集內容，高單價</td></tr>
-            <tr class="total"><td>合計</td><td class="num">512 次</td><td class="num">—</td><td class="num">NT$ 12,660</td><td>≈ 一張演唱會門票＋周邊預算</td></tr>
+            <tr><td>Weverse 發文</td><td class="num">94</td><td class="num">50</td><td class="num">4,700</td><td>本人發文，中頻率</td></tr>
+            <tr><td>Weverse 留言</td><td class="num">104</td><td class="num">30</td><td class="num">3,120</td><td>高頻日常互動</td></tr>
+            <tr><td>直播（團體＆個人）</td><td class="num">9</td><td class="num">300</td><td class="num">2,700</td><td>稀有事件，高單價</td></tr>
+            <tr><td>IG 發文</td><td class="num">30</td><td class="num">100</td><td class="num">3,000</td><td>正式發文</td></tr>
+            <tr><td>IG 限時動態</td><td class="num">183</td><td class="num">30</td><td class="num">5,490</td><td>最高頻事件</td></tr>
+            <tr><td>IG 留言</td><td class="num">37</td><td class="num">15</td><td class="num">555</td><td>最低單價</td></tr>
+            <tr><td>Challenge</td><td class="num">26</td><td class="num">200</td><td class="num">5,200</td><td>含合作短影音</td></tr>
+            <tr><td>節目（主持／來賓）</td><td class="num">29</td><td class="num">1,000</td><td class="num">29,000</td><td>整集內容，最高單價</td></tr>
+            <tr class="total"><td>合計</td><td class="num">512 次</td><td class="num">—</td><td class="num">NT$ 53,765</td><td>月均 ~NT$4,480 ≈ VIP 門票＋遠征基金</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="callout">同一份規則只要調整單價倍率就能對準不同目標：全部 ×2 ≈ NT$25,320（看台好位＋遠征），×0.5 ≈ NT$6,330（學生方案）。app 將內建「倍率滑桿」讓用戶用歷史數據回推適合自己的單價。</div>
+      <div class="callout"><b>敏感度提醒：</b>節目一項占總額 54%（29 集 × NT$1,000）——若偶像接固定週更綜藝（年 52 集），僅此項即 NT$52,000。本套規則對「接節目量」高度敏感；倍率滑桿（F6）隨時可整體縮放：×0.5 ≈ NT$26,883／年（月均 ~2,240）、×0.2 ≈ NT$10,753（學生方案）。</div>
+
+      <h4 style="margin-top:20px;">📚 擴充事件庫（選配，新增事件時的建議清單與參考單價）</h4>
+      <p class="muted">預設模板只放上方八種；以下為 F2 規則引擎「新增事件類型」時提供的建議清單，單價比例對齊出廠值的量級，全部可改。</p>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>層級</th><th>事件類型</th><th class="num">建議單價 (NT$)</th><th>頻率警示</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4">高頻日常<br><span class="muted">(15–50)</span></td><td>泡泡／Weverse DM 私訊</td><td class="num">15</td><td>⚠️ 訂閱者日均可達數則，月負擔可觀，務必最低價</td></tr>
+          <tr><td>官方 X（Twitter）發文</td><td class="num">30</td><td>依團體營業習慣可能高頻</td></tr>
+          <tr><td>TikTok 官方發文</td><td class="num">30</td><td></td></tr>
+          <tr><td>官方花絮照／相簿更新</td><td class="num">30</td><td>回歸期爆量</td></tr>
+          <tr><td rowspan="6">中頻內容<br><span class="muted">(100–300)</span></td><td>打歌舞台（音放／音中／人歌一場）</td><td class="num">100</td><td>⚠️ 回歸期每週 5–6 場，連續 2–4 週</td></tr>
+          <tr><td>官方自製綜藝／Behind 影片</td><td class="num">150</td><td></td></tr>
+          <tr><td>Vlog 上傳</td><td class="num">200</td><td></td></tr>
+          <tr><td>電台／Podcast 出演</td><td class="num">200</td><td></td></tr>
+          <tr><td>雜誌畫報／寫真公開</td><td class="num">200</td><td></td></tr>
+          <tr><td>品牌代言／廣告官宣</td><td class="num">300</td><td></td></tr>
+          <tr><td rowspan="7">稀有大事件<br><span class="muted">(500–1,000)</span></td><td>回歸預告／官宣</td><td class="num">500</td><td rowspan="7">年次數個位數，高價無妨；<br>也是 F17 拼貼牆的閃卡時刻</td></tr>
+          <tr><td>MV 公開</td><td class="num">500</td></tr>
+          <tr><td>音樂節目一位（得獎）</td><td class="num">500</td></tr>
+          <tr><td>演唱會／見面會官宣</td><td class="num">500</td></tr>
+          <tr><td>新專輯發行日</td><td class="num">1,000</td></tr>
+          <tr><td>頒獎典禮得獎</td><td class="num">1,000</td></tr>
+          <tr><td>生日／出道週年</td><td class="num">1,000</td></tr>
+          <tr><td rowspan="4">情緒玩法<br><span class="muted">(F11 特殊規則)</span></td><td>心動就存</td><td class="num">自由</td><td rowspan="4">一次性／隨機事件，<br>把失落轉成資本的變形玩法</td></tr>
+          <tr><td>搶票失敗罰存</td><td class="num">500</td></tr>
+          <tr><td>抽卡沒抽到本命</td><td class="num">100</td></tr>
+          <tr><td>被路透／預告美到</td><td class="num">100</td></tr>
+        </tbody>
+      </table>
+      </div>
     </div>
 
     <div class="card">
@@ -389,7 +420,7 @@
         <thead><tr><th>#</th><th>功能</th><th>說明</th><th>優先級</th></tr></thead>
         <tbody>
           <tr><td>F1</td><td><b>偶像檔案</b></td><td>建立多位偶像：名字、暱稱、應援色、頭像 emoji、幣別（預設 NT$，可選 ₩ / ¥ / US$ 或自訂符號）。每位偶像一個獨立存錢罐。</td><td><span class="tag mvp">MVP</span></td></tr>
-          <tr><td>F2</td><td><b>事件規則引擎</b></td><td>每位偶像可自訂事件類型（名稱、icon、單價）。內建預設模板：Weverse 發文/留言、直播、IG 發文/限動/留言、Challenge、節目，一鍵套用後可改。</td><td><span class="tag mvp">MVP</span> <span class="tag core">核心</span></td></tr>
+          <tr><td>F2</td><td><b>事件規則引擎</b></td><td>每位偶像可自訂事件類型（名稱、icon、單價）。內建預設模板：Weverse 發文/留言、直播、IG 發文/限動/留言、Challenge、節目（出廠單價見分頁 1，v1.5 已拍板），一鍵套用後可改；新增事件時提供「擴充事件庫」建議清單（分頁 1）。</td><td><span class="tag mvp">MVP</span> <span class="tag core">核心</span></td></tr>
           <tr><td>F3</td><td><b>一鍵快速記帳</b></td><td>首頁以大按鈕陣列呈現所有事件類型，點一下 = +1（自動記金額＋時間戳），支援連點、長按輸入次數、備註（選填）。可撤銷最近一筆。</td><td><span class="tag mvp">MVP</span> <span class="tag core">核心</span></td></tr>
           <tr><td>F4</td><td><b>存錢罐與目標</b></td><td>每罐顯示累計總額；可設定目標（名稱、金額、期限，如「安可場門票 NT$8,800」），以進度條＋罐子填滿動畫視覺化，達成時慶祝畫面。</td><td><span class="tag mvp">MVP</span></td></tr>
           <tr><td>F5</td><td><b>歷史紀錄</b></td><td>依時間排序的存入明細；可補記過去日期、編輯、刪除。各事件類型累計次數一覽（對齊手動表單的年度總表）。</td><td><span class="tag mvp">MVP</span></td></tr>
@@ -779,12 +810,12 @@
         <li><b>克制原則（Design Lead 決策）</b>：貼紙與高彩度元素只出現在「慶祝時刻」與「收藏／回顧頁」，日常記帳畫面保持克制；動效分層（記帳=輕 0.3s、達標=重全螢幕）且提供「減少動態」開關。</li>
         <li><b>共通原則</b>：數字用等寬字體（tabular-nums）確保金額對齊；記帳按鈕最小點擊區 44×44px。</li>
       </ul>
-      <div class="callout rose"><b>剩餘待拍板：</b>① MVP 功能邊界是否同意（見分頁 4）　② 預設事件模板的八種類型與示範單價是否符合你的追星習慣。確認後即進入原型製作階段（單頁 HTML＋localStorage 可操作原型）。</div>
+      <div class="callout blue"><b>✅ 全部拍板完成（v1.5）：</b>① 風格＝D（C 骨架 × A 應援色換膚）　② MVP 邊界＝F1–F6＋四不做　③ 預設八事件出廠單價＝用戶自訂檔（見分頁 1，年試算 NT$53,765）。<b>規劃階段結束，可進入原型製作</b>（單頁 HTML＋localStorage 可操作原型）。</div>
     </div>
   </div>
 </div>
 
-<footer>愛豆存錢罐 · 產品規劃文件 v1.4 · Phase 1 · 風格已拍板（D）· F16 目標物顯影＋F17 拼貼牆為核心互動 · 記錄與裝飾分離 · 功能邊界確認後進入原型階段</footer>
+<footer>愛豆存錢罐 · 產品規劃文件 v1.5 · 三大拍板全數完成（風格 D · MVP 邊界 · 出廠單價）· 進入原型製作階段</footer>
 
 <script>
 function switchTab(name, btn) {
