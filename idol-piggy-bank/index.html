@@ -51,6 +51,7 @@
 
   .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.3px; vertical-align: middle; }
   .tag.mvp { background: var(--green-bg); color: var(--green-dk); }
+  .tag.opt { background: var(--blue-bg); color: var(--blue-dk); }
   .tag.v2 { background: var(--purple-bg); color: var(--purple-dk); }
   .tag.future { background: var(--gray-bg); color: var(--gray); }
   .tag.core { background: var(--rose-bg); color: var(--rose-dk); }
@@ -129,15 +130,16 @@
   <div class="top-bar-inner">
     <div>
       <h1>🐷 愛豆存錢罐 Idol Piggy Bank</h1>
-      <div class="subtitle">產品規劃文件 v1 · Phase 1 規劃階段 · 2026-07</div>
+      <div class="subtitle">產品規劃文件 v1.1 · Phase 1 規劃階段 · 2026-07</div>
     </div>
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('concept', this)"><span class="tab-num">1</span>概念與計價規則</button>
       <button class="tab-btn" onclick="switchTab('users', this)"><span class="tab-num">2</span>目標用戶</button>
-      <button class="tab-btn" onclick="switchTab('features', this)"><span class="tab-num">3</span>功能規劃</button>
-      <button class="tab-btn" onclick="switchTab('ia', this)"><span class="tab-num">4</span>資訊架構與流程</button>
-      <button class="tab-btn" onclick="switchTab('model', this)"><span class="tab-num">5</span>內容模型</button>
-      <button class="tab-btn" onclick="switchTab('style', this)"><span class="tab-num">6</span>風格建議</button>
+      <button class="tab-btn" onclick="switchTab('market', this)"><span class="tab-num">3</span>競品分析</button>
+      <button class="tab-btn" onclick="switchTab('features', this)"><span class="tab-num">4</span>功能規劃</button>
+      <button class="tab-btn" onclick="switchTab('ia', this)"><span class="tab-num">5</span>資訊架構與流程</button>
+      <button class="tab-btn" onclick="switchTab('model', this)"><span class="tab-num">6</span>內容模型</button>
+      <button class="tab-btn" onclick="switchTab('style', this)"><span class="tab-num">7</span>風格建議</button>
     </div>
   </div>
 </div>
@@ -209,7 +211,7 @@
       <h3>🎯 產品定位一句話</h3>
       <p style="font-size:16px; font-weight:700;">「偶像的每一次營業，都自動變成你的存款」——為追星族設計的遊戲化存錢記錄 app，取代手動表單，把統計變成收集的樂趣。</p>
       <ul>
-        <li><b>不是</b>記帳軟體：不管支出、不做預算表，只做「存入」這一件事。</li>
+        <li><b>不是</b>記帳軟體：MVP 只做「存入」這一件事；追星支出記錄（演唱會、周邊、小卡）為 V2 衛星功能，以「存 vs 花」對照呈現（見功能 F15 與分頁 3 調研）。</li>
         <li><b>不是</b>銀行服務：MVP 不碰真實金流，是「記錄承諾」的存錢罐（實際轉帳為遠期展望）。</li>
         <li><b>是</b>粉絲的年度回憶錄：512 筆記錄不只是錢，也是「他今年勤勤懇懇營業了 512 次」的證明。</li>
       </ul>
@@ -314,12 +316,70 @@
   </div>
 </div>
 
-<!-- ============ TAB 3: FEATURES ============ -->
+<!-- ============ TAB 3: MARKET ============ -->
+<div id="tab-market" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>3 · 競品分析</h2>
+      <p>日韓已有成熟產品（含銀行官方與粉絲自製），但繁中市場是空白。分「存錢類」與「支出記錄類」兩張地圖。</p>
+    </div>
+
+    <div class="card">
+      <h3>🏦 存錢類競品（愛豆存錢法的實作者）</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>產品</th><th>性質</th><th>核心功能</th><th>與我們的差異／機會</th></tr></thead>
+        <tbody>
+          <tr><td><b>KakaoBank 최애적금</b><br><span class="muted">🇰🇷 銀行官方 · 2023.04</span></td><td>真實積金帳戶</td><td>最多 20 條存錢規則、一鍵存入真錢、年利率 1.6%、本命照片/GIF 當背景、生成統計分享圖</td><td>需韓國銀行帳戶，台灣用不了；規則上限 20 條；金融產品做不了年度回憶錄玩法</td></tr>
+          <tr><td><b>Toss Bank 덕질 모으기</b><br><span class="muted">🇰🇷 銀行官方</span></td><td>真實儲蓄空間</td><td>年利率 2%、存款+留言分享到偶像應援板、粉絲團體排行榜（TXT 3,862 人共存 ₩9,000 萬+）</td><td>同鎖韓國金融體系；社群排行是它的殺手鐧，屬我們 V3 才可能的方向</td></tr>
+          <tr><td><b>#OSHI 推し活貯金</b><br><span class="muted">🇯🇵 獨立 app</span></td><td>記錄工具</td><td>本命照片背景、卡片式整理存錢/生日/活動、一鍵記錄</td><td>偏推し活記帳，非「事件 × 單價」規則引擎</td></tr>
+          <tr><td><b>Oshi Note</b><br><span class="muted">🇯🇵 粉絲自製 web app</span></td><td>記錄工具</td><td>存錢依「一般直播/聯動/Live」分類、目標達成百分比、分類圖表</td><td>概念最接近本產品，但日文、單推導向、無應援色主題與繁中在地化</td></tr>
+          <tr><td>최애돌 / IDOLPICK<br><span class="muted">🇰🇷 粉絲綜合 app</span></td><td>投票/行程</td><td>投票、打歌行程、桌布——無存錢功能</td><td>證明「粉絲工具 app」生態成熟，存錢在中文圈仍是空白</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🧾 支出記錄類競品（追星花費管理）</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>產品</th><th>性質</th><th>核心功能</th><th>可借鑑之處</th></tr></thead>
+        <tbody>
+          <tr><td><b>Favvy</b><br><span class="muted">🇰🇷 獨立 app · 2025</span></td><td>追星錢包</td><td><b>支出／儲蓄／待付款三模式</b>、「祭壇首頁」（本命照片+象徵色換膚+入坑 N 日）、小卡狀態管理（收藏/交換/徵求）</td><td>與本產品最接近的「存＋花」雙模式先例；祭壇首頁與應援色換膚驗證了我們風格 D 的方向</td></tr>
+          <tr><td><b>推し活支出管理</b><br><span class="muted">🇯🇵 獨立 app</span></td><td>支出記錄</td><td>票券/周邊/交通分類記帳、<b>抽票中籤管理</b>、周邊買賣與交換紀錄</td><td>「抽票中籤日曆」是追星記帳的獨特場景，一般記帳 app 沒有</td></tr>
+          <tr><td><b>Joy Money 推し活家計簿</b><br><span class="muted">🇯🇵 群眾募資中</span></td><td>支出記錄</td><td><b>支出 × 幸福度 × 回憶</b>三維記錄：金額配滿足度評分＋照片，推し主題色自訂</td><td>「花得值不值得」的幸福度評分——支出不只是數字，是回憶索引</td></tr>
+          <tr><td>推し活家計簿 MyColor<br><span class="muted">🇯🇵 獨立 app</span></td><td>支出記錄</td><td>推し活專用家計簿</td><td rowspan="2">市場擁擠度證明：日本「推し活記帳」已是紅海，純支出記錄難差異化</td></tr>
+          <tr><td>推しPay / Oshibana<br><span class="muted">🇯🇵 獨立 app</span></td><td>綜合管理</td><td>支出、追星天數、行事曆、紀念日一站管理</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="callout blue"><b>支出功能的調研結論：</b>「純支出記帳」在日本已是紅海、在韓國有 Favvy 卡位，但它們都以「花錢」為中心。我們的機會是<b>以存錢罐為主體、支出為對照</b>：「他營業幫你存了 NT$12,660，你為他花了 NT$34,000」——存與花放在同一面鏡子裡，這個敘事目前沒有人做。</div>
+    </div>
+
+    <div class="card">
+      <h3>🎯 三視角優化決策（Design Lead × UX Researcher × PM）</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>視角</th><th>關鍵風險／洞察</th><th>已納入規劃的對策</th></tr></thead>
+        <tbody>
+          <tr><td><b>UX Researcher</b><br>使用者</td><td>最大未驗證假設：「粉絲會在當下記錄」——原始用戶自述「發的當下忘了記」，暗示真實行為可能是<b>批次補記</b>。其次：存錢遊戲可能造成焦慮（營業太多存不起）。</td><td>原型階段做 5 人訪談＋2 週日記研究；「快速補記」入口與首頁按鈕同等優先；單價負擔試算＋「本月封頂」機制（見 F6）。</td></tr>
+          <tr><td><b>Design Lead</b><br>設計</td><td>Y2K 貼紙風個性最強但最怕「每頁都吵」；金額可讀性是命脈；應援色明度差異大。</td><td>嚴格視覺 token（貼紙只出現在慶祝時刻與收藏頁、日常記帳克制）；金額永遠置於白底貼紙框、對比 ≥ 4.5:1；應援色經衍生色引擎轉換而非直鋪（見分頁 7 風格 D）。</td></tr>
+          <tr><td><b>PM</b><br>競爭度</td><td>護城河不在功能、在資料：一年 512 筆紀錄＝搬家成本。不跟銀行拚真錢與利息。法務紅線：不得內建偶像肖像素材。</td><td>年度回顧從 V2 提前為 MVP 後第一優先（Spotify Wrapped 效應）；聚焦記錄的情感價值＋繁中在地化；內建素材僅貼紙/插畫，偶像照片一律用戶自行上傳、僅存本機。</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="rel-note">GTM 備註：冷啟動鎖定 Threads／Dcard 追星版——「曬統計圖卡」本身就是內容，產品內建分享即是免費獲客迴路。變現（遠期）：免費 1–2 位偶像，訂閱解鎖多擔＋貼紙包＋拍貼模板；不做廣告。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 4: FEATURES ============ -->
 <div id="tab-features" class="tab-content">
   <div class="w">
     <div class="page-head">
-      <h2>3 · 功能規劃</h2>
-      <p>以 MVP（原型階段實作）與 V2（後續迭代）分級。<span class="tag mvp">MVP</span> 原型必做　<span class="tag v2">V2</span> 迭代再做　<span class="tag future">展望</span> 遠期方向</p>
+      <h2>4 · 功能規劃</h2>
+      <p>以 MVP（原型階段實作）與 V2（後續迭代）分級。<span class="tag mvp">MVP</span> 原型必做　<span class="tag v2">V2</span> 迭代再做　<span class="tag opt">Optional</span> 假設待驗證　<span class="tag future">展望</span> 遠期方向</p>
     </div>
 
     <div class="card">
@@ -340,8 +400,36 @@
           <tr><td>F10</td><td><b>提醒與連續紀錄</b></td><td>每日回顧提醒（「今天有漏記的營業嗎？」）、連續記錄 streak 徽章。</td><td><span class="tag v2">V2</span></td></tr>
           <tr><td>F11</td><td><b>特殊玩法規則</b></td><td>「心動就存」自由存入按鈕、「搶不到票罰存」等一次性事件。</td><td><span class="tag v2">V2</span></td></tr>
           <tr><td>F12</td><td><b>真實金流串接</b></td><td>連結銀行子帳戶／電子錢包自動轉帳（參考韓國 Toss Bank 與偶像節目合作模式）。涉及金融法規，僅列為展望。</td><td><span class="tag future">展望</span></td></tr>
+          <tr><td>F13</td><td><b>事件附件</b></td><td>記錄事件時可選附上：貼文截圖／一句語錄／心動指數（1–5 ❤️）。年度回顧可拼貼成「512 次營業牆」。<b>此功能是否成立尚未驗證</b>——詳見下方 Optional 功能卡。</td><td><span class="tag opt">Optional</span></td></tr>
+          <tr><td>F14</td><td><b>去背貼紙工房</b></td><td>拍攝周邊、小卡、應援物 → 提取照片主體去背做成專屬貼紙（如 iPhone 長按照片主體的效果），用於裝飾目標拍貼頁與年度回顧。MVP 先支援「貼上已去背的 PNG」（借力 iOS 原生功能），V2 再內建去背。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F15</td><td><b>追星支出記錄</b></td><td>與存錢罐並列的「花費帳本」：單筆支出＋分類（演唱會/周邊/小卡/專輯/交通）＋月統計，與存錢對照呈現「存 vs 花」。參考 Favvy 三模式與 Joy Money 幸福度評分（見分頁 3 調研）。</td><td><span class="tag v2">V2</span></td></tr>
         </tbody>
       </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔬 Optional 功能卡：F13 事件附件（假設待驗證）</h3>
+        <p><b>假設：</b>粉絲願意在記帳的 3 秒流程之外，多花 10–30 秒為事件附上截圖或語錄。</p>
+        <p><b>不確定性：</b>與「3 秒記帳」的核心價值直接矛盾——附件把記錄從「反射動作」變成「整理工作」，可能降低記錄率；且截圖含官方內容，只能存本機不能進分享圖卡。</p>
+        <h4>驗證計畫（原型階段）</h4>
+        <ul>
+          <li>原型僅做<b>最輕版本</b>：記錄後浮出「要留一句話嗎？」的選填輸入框（不做截圖上傳），觀察使用率。</li>
+          <li>日記研究中直接問：「你剛剛記錄時，想不想把那則貼文留下來？」</li>
+          <li><b>判準：</b>試用者附註率 ≥ 30% → F13 升級為 V2 正式功能（加截圖）；&lt; 10% → 降級為純備註欄，資源轉去年度回顧。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>✨ 互動性腦暴 Backlog（未排期，擇優進 V2/V3）</h3>
+        <ul>
+          <li>🎯 <b>目標＝拍貼顯影</b>：目標選一個拍貼框，進度 0% 全白 → 100% 完整顯影；達成後上傳照片＋去背貼紙（F14）＋日期章金額章，生成「我靠他存到的」紀念拍貼。</li>
+          <li>🎞️ <b>事件貼紙圖鑑</b>：每種事件對應一款貼紙（限動=拍立得、直播=ON AIR 燈牌、回歸=閃卡），稀有事件掉落閃卡，集滿有成就。</li>
+          <li>🐷 <b>罐子養成</b>：存錢罐是會長大的小生物，連續記錄餵養、達標進化。</li>
+          <li>📅 <b>營業日曆熱力圖</b>：他哪天最勤勞，一格一格看得見。</li>
+          <li>📱 <b>桌面 Widget 一鍵記帳</b>：「3 秒目標」的終極解。</li>
+          <li>🤝 <b>同擔空間</b>（V3、需後端）：參考 Toss Bank——同團粉絲互看進度、互相打氣、團體排行。</li>
+        </ul>
       </div>
     </div>
 
@@ -372,7 +460,7 @@
 <div id="tab-ia" class="tab-content">
   <div class="w">
     <div class="page-head">
-      <h2>4 · 資訊架構與畫面流程</h2>
+      <h2>5 · 資訊架構與畫面流程</h2>
       <p>Sitemap、主要畫面線框、關鍵操作流程。MVP 共 5 個主要畫面＋1 個首次引導。</p>
     </div>
 
@@ -473,7 +561,7 @@
 <div id="tab-model" class="tab-content">
   <div class="w">
     <div class="page-head">
-      <h2>5 · 內容模型</h2>
+      <h2>6 · 內容模型</h2>
       <p>五個資料實體。原型階段以 localStorage 單機儲存，結構已預留未來雲端同步空間。</p>
     </div>
 
@@ -544,6 +632,12 @@
         <li><b>事件次數統計</b> = 按 eventTypeId 分組計數 Entry——即分頁 1 試算表的自動化版本。</li>
         <li><b>刪除策略</b>：EventType 不硬刪、只 archived（保護歷史 Entry 的參照）；Idol 刪除需二次確認並連帶刪除其所有資料。</li>
       </ul>
+      <h4>V2 預留實體（本次不實作，schema 先留擴充空間）</h4>
+      <ul>
+        <li><b>Expense 支出紀錄</b>（F15）：idolId、category（演唱會/周邊/小卡/專輯/交通/其他）、amount、occurredAt、note、joyScore（幸福度 1–5，借鑑 Joy Money）——與 Entry 平行的第二本帳。</li>
+        <li><b>Sticker 貼紙</b>（F14）：idolId、imageBlob（去背 PNG，僅存本機）、createdAt——去背貼紙工房的產出，用於目標拍貼頁裝飾。</li>
+        <li><b>Entry.quote / Entry.mood</b>（F13 Optional）：一句話與心動指數欄位，隨附件功能驗證結果決定去留。</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -552,15 +646,43 @@
 <div id="tab-style" class="tab-content">
   <div class="w">
     <div class="page-head">
-      <h2>6 · 風格建議</h2>
-      <p>三個視覺方向供拍板。推薦 A（應援色主題）為預設、B 為淺色替代主題；C 為差異化大膽路線。</p>
+      <h2>7 · 風格建議</h2>
+      <p>四個視覺方向。<b>已拍板：D（C 的骨架 × A 的靈魂）</b>；A／B／C 保留為紀錄與替代主題來源。</p>
+    </div>
+
+    <!-- Direction D: selected -->
+    <div class="card" style="border: 2px solid var(--rose); margin-bottom: 20px;">
+      <h3>⭐ D · Y2K 貼紙手帳 × 應援色換膚（拍板選定）＝「C 的骨架 ＋ A 的靈魂」</h3>
+      <div class="grid-2" style="align-items: start;">
+        <div>
+          <div class="preview" style="background:#ffe9f5; color:#1e1b4b; border-radius:12px; padding:22px 20px; background-image:radial-gradient(circle at 82% 18%, #ffc7e8 0 16%, transparent 17%), radial-gradient(circle at 12% 85%, #ffd9ee 0 12%, transparent 13%);">
+            <div style="font-size:11px; letter-spacing:1px; font-weight:800;">主題：🎀 阿圓（應援色 #FF4FA3）</div>
+            <div style="display:inline-block; font-size:22px; font-weight:900; margin:6px 0; background:#fff; border:3px solid #1e1b4b; border-radius:10px; padding:2px 10px; box-shadow:3px 3px 0 #1e1b4b;">NT$ 12,660 🎀</div>
+            <div style="height:10px; background:#fff; border:2px solid #1e1b4b; border-radius:99px; overflow:hidden; margin:8px 0 12px;"><div style="width:72%; height:100%; background:repeating-linear-gradient(45deg,#ff4fa3 0 8px,#ffc7e8 8px 16px);"></div></div>
+            <span class="mock-pill" style="background:#fff; border:2px solid #1e1b4b; box-shadow:2px 2px 0 #1e1b4b;">📸 限動 +10</span>
+            <span class="mock-pill" style="background:#ffc7e8; border:2px solid #1e1b4b; box-shadow:2px 2px 0 #1e1b4b;">🔴 直播 +100</span>
+          </div>
+          <div class="wire-caption" style="margin-top:8px;">示意：同一套 Y2K 骨架，底色與重點色由該偶像的應援色（此例桃粉）衍生。換到藍色應援色的偶像時，整本手帳變成粉藍文具組。</div>
+        </div>
+        <div>
+          <p><b>設計規則：</b>版式語言完全沿用 C（粗描邊、硬陰影、貼紙、拍貼、白底金額框），但色彩不再固定——由 <code>Idol.color</code> 餵進<b>衍生色引擎</b>動態生成。</p>
+          <h4>衍生色引擎規格</h4>
+          <ul>
+            <li><b>粉彩底色</b>＝應援色降飽和提亮（HSL: S×0.45、L→88–93%）。</li>
+            <li><b>重點色</b>＝應援色原值，僅用於進度條、慶祝動效、小面積貼紙。</li>
+            <li><b>固定不變</b>：描邊與文字色恆為深藍紫 #1E1B4B、金額恆置白底貼紙框——跨主題的品牌一致性與可讀性錨點。</li>
+            <li><b>對比保險</b>：衍生結果自動檢查對比度 ≥ 4.5:1，不足時自動加深重點色（處理黃色系應援色等高明度情況）。</li>
+          </ul>
+          <p class="muted">競品佐證：韓國 Favvy 的「祭壇首頁＋象徵色換膚」驗證了此方向的粉絲接受度（見分頁 3）。</p>
+        </div>
+      </div>
     </div>
 
     <div class="grid-3">
       <!-- Direction A -->
       <div class="style-card">
         <div class="preview" style="background:#0b1020; color:#fff;">
-          <div style="font-size:11px; opacity:0.6; letter-spacing:1px;">DIRECTION A · 推薦</div>
+          <div style="font-size:11px; opacity:0.6; letter-spacing:1px;">DIRECTION A</div>
           <div style="font-size:22px; font-weight:800; margin:6px 0; color:#7dd3fc;">NT$ 12,660</div>
           <div style="height:8px; background:rgba(255,255,255,0.12); border-radius:99px; overflow:hidden; margin:8px 0 12px;"><div style="width:72%; height:100%; background:linear-gradient(90deg,#38bdf8,#a78bfa);"></div></div>
           <span class="mock-pill" style="background:rgba(56,189,248,0.18); color:#7dd3fc; border:1px solid rgba(56,189,248,0.4);">限動 +10</span>
@@ -639,17 +761,18 @@
     </div>
 
     <div class="card" style="margin-top:20px;">
-      <h3>🧭 建議與待拍板事項</h3>
+      <h3>🧭 拍板紀錄與剩餘事項</h3>
       <ul>
-        <li><b>建議組合</b>：以 <b>A（應援色主題）為預設</b>——它把「這是為追星而生的 app」說得最清楚，且應援色換膚直接由資料模型的 Idol.color 驅動，功能與視覺一體；B 作為淺色替代主題（Settings.theme 已預留）。C 的貼紙概念可局部借用（成就徽章、年度回顧拼貼）而不必整套採用。</li>
-        <li><b>共通原則</b>：數字用等寬字體（tabular-nums）確保金額對齊；記帳按鈕最小點擊區 44×44px；動效輕巧（進度條彈跳、+1 飛入罐子）但可關閉。</li>
+        <li><b>✅ 已拍板（v1.1）</b>：視覺方向採 <b>D＝C 的骨架 × A 的靈魂</b>。A／B／C 保留在本頁作為決策紀錄；B 的奶油色系未來可作為「低刺激替代主題」進 Settings.theme。</li>
+        <li><b>克制原則（Design Lead 決策）</b>：貼紙與高彩度元素只出現在「慶祝時刻」與「收藏／回顧頁」，日常記帳畫面保持克制；動效分層（記帳=輕 0.3s、達標=重全螢幕）且提供「減少動態」開關。</li>
+        <li><b>共通原則</b>：數字用等寬字體（tabular-nums）確保金額對齊；記帳按鈕最小點擊區 44×44px。</li>
       </ul>
-      <div class="callout rose"><b>待拍板：</b>① 風格方向（A / B / C 或組合）　② MVP 功能邊界是否同意（見分頁 3）　③ 預設事件模板的八種類型與示範單價是否符合你的追星習慣。拍板後即進入原型製作階段（單頁 HTML＋localStorage 可操作原型）。</div>
+      <div class="callout rose"><b>剩餘待拍板：</b>① MVP 功能邊界是否同意（見分頁 4）　② 預設事件模板的八種類型與示範單價是否符合你的追星習慣　③ F13 事件附件走驗證流程（原型先做最輕的「留一句話」版本）。確認後即進入原型製作階段（單頁 HTML＋localStorage 可操作原型）。</div>
     </div>
   </div>
 </div>
 
-<footer>愛豆存錢罐 · 產品規劃文件 v1 · Phase 1 · 拍板後進入原型階段</footer>
+<footer>愛豆存錢罐 · 產品規劃文件 v1.1 · Phase 1 · 風格已拍板（D）· 功能邊界確認後進入原型階段</footer>
 
 <script>
 function switchTab(name, btn) {
