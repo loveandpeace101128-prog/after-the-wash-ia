@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>愛豆存錢罐 — 產品規劃文件 v1</title>
+<style>
+  :root {
+    --blue: #0ea5e9; --blue-bg: #e0f2fe; --blue-dk: #0369a1;
+    --green: #10b981; --green-bg: #d1fae5; --green-dk: #065f46;
+    --purple: #8b5cf6; --purple-bg: #ede9fe; --purple-dk: #5b21b6;
+    --teal: #14b8a6; --teal-bg: #ccfbf1; --teal-dk: #115e59;
+    --amber: #f59e0b; --amber-bg: #fef3c7; --amber-dk: #92400e;
+    --rose: #f43f5e; --rose-bg: #ffe4e6; --rose-dk: #9f1239;
+    --gray: #64748b; --gray-bg: #f1f5f9; --border: #e2e8f0;
+    --dark: #1e293b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif; background: #f8f9fa; color: var(--dark); line-height: 1.6; }
+
+  /* ===== GLOBAL NAV ===== */
+  .top-bar { background: var(--dark); color: white; padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
+  .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .top-bar h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .top-bar .subtitle { font-size: 11px; opacity: 0.55; margin-top: 2px; }
+  .tab-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab-btn { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+  .tab-btn.active { background: white; color: var(--dark); }
+  .tab-btn .tab-num { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 800; text-align: center; line-height: 20px; margin-right: 6px; }
+  .tab-btn.active .tab-num { background: var(--dark); color: white; }
+
+  .tab-content { display: none; padding: 40px 20px 80px; }
+  .tab-content.active { display: block; }
+  .w { max-width: 1280px; margin: 0 auto; }
+
+  /* ===== SHARED ===== */
+  .page-head { margin-bottom: 28px; }
+  .page-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; }
+  .page-head p { color: var(--gray); font-size: 14px; margin-top: 4px; max-width: 720px; }
+
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 20px; }
+  .card h3 { font-size: 16px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h4 { font-size: 13.5px; font-weight: 800; margin: 16px 0 6px; }
+  .card p { font-size: 13.5px; margin-bottom: 8px; }
+  .card ul, .card ol { font-size: 13.5px; padding-left: 22px; margin-bottom: 8px; }
+  .card li { margin-bottom: 5px; }
+  .muted { color: var(--gray); }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 5px; letter-spacing: 0.3px; vertical-align: middle; }
+  .tag.mvp { background: var(--green-bg); color: var(--green-dk); }
+  .tag.v2 { background: var(--purple-bg); color: var(--purple-dk); }
+  .tag.future { background: var(--gray-bg); color: var(--gray); }
+  .tag.core { background: var(--rose-bg); color: var(--rose-dk); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  th { background: var(--gray-bg); text-align: left; padding: 8px 12px; font-weight: 700; border: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 12px; border: 1px solid var(--border); vertical-align: top; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { background: var(--amber-bg); font-weight: 800; }
+  .table-scroll { overflow-x: auto; }
+
+  .formula { background: var(--dark); color: #a5f3fc; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; padding: 16px 20px; border-radius: 10px; margin: 12px 0; overflow-x: auto; }
+  .callout { border-left: 4px solid var(--amber); background: var(--amber-bg); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; margin: 12px 0; }
+  .callout.blue { border-color: var(--blue); background: var(--blue-bg); }
+  .callout.rose { border-color: var(--rose); background: var(--rose-bg); }
+
+  /* persona */
+  .persona-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .persona-avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .persona-head .name { font-weight: 800; font-size: 15px; }
+  .persona-head .meta { font-size: 12px; color: var(--gray); }
+  .quote { font-style: italic; color: var(--gray); border-left: 3px solid var(--border); padding-left: 12px; margin: 10px 0; font-size: 13px; }
+
+  /* user story */
+  .story { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+  .story:last-child { border-bottom: none; }
+  .story .id { font-weight: 800; color: var(--purple-dk); white-space: nowrap; }
+
+  /* IA tree */
+  .tree { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px; line-height: 1.9; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; overflow-x: auto; white-space: pre; }
+  .tree b { color: var(--blue-dk); }
+
+  /* wireframe */
+  .wire { border: 2px solid var(--dark); border-radius: 18px; padding: 14px; background: #fff; font-size: 11.5px; }
+  .wire .wire-title { font-weight: 800; font-size: 12px; text-align: center; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  .wire .zone { border: 1.5px dashed #94a3b8; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; color: #475569; background: var(--gray-bg); }
+  .wire .zone.hero { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-dk); text-align: center; padding: 14px 10px; }
+  .wire .zone.action { background: var(--rose-bg); border-color: var(--rose); color: var(--rose-dk); text-align: center; font-weight: 700; }
+  .wire-caption { font-size: 12px; color: var(--gray); margin-top: 8px; }
+
+  /* flow */
+  .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .flow .step { background: var(--gray-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; }
+  .flow .step.hl { background: var(--green-bg); border-color: var(--green); color: var(--green-dk); }
+  .flow .arr { display: flex; align-items: center; color: var(--gray); font-weight: 800; }
+
+  /* entity */
+  .entity { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; }
+  .entity .ent-head { padding: 10px 14px; font-weight: 800; font-size: 14px; color: #fff; }
+  .entity table { margin: 0; font-size: 12.5px; }
+  .entity td, .entity th { border-left: none; border-right: none; }
+  .entity .pk { font-weight: 700; }
+  .rel-note { font-size: 12.5px; color: var(--gray); margin-top: 10px; }
+
+  /* style directions */
+  .style-card { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  .style-card .preview { padding: 22px 20px; min-height: 170px; }
+  .style-card .body { padding: 18px 20px; border-top: 1px solid var(--border); flex: 1; }
+  .style-card .body h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+  .style-card .body p { font-size: 13px; margin-bottom: 8px; }
+  .swatches { display: flex; gap: 6px; margin: 10px 0; }
+  .swatch { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12); position: relative; }
+  .swatch-label { font-size: 9.5px; color: var(--gray); text-align: center; margin-top: 3px; font-family: ui-monospace, Menlo, monospace; }
+  .pros-cons { font-size: 12.5px; }
+  .pros-cons b { display: block; margin-top: 8px; }
+
+  /* mock piggy previews */
+  .mock-pill { display: inline-block; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; margin: 3px 2px; }
+
+  footer { text-align: center; font-size: 12px; color: var(--gray); padding: 30px 20px 50px; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div>
+      <h1>🐷 愛豆存錢罐 Idol Piggy Bank</h1>
+      <div class="subtitle">產品規劃文件 v1 · Phase 1 規劃階段 · 2026-07</div>
+    </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('concept', this)"><span class="tab-num">1</span>概念與計價規則</button>
+      <button class="tab-btn" onclick="switchTab('users', this)"><span class="tab-num">2</span>目標用戶</button>
+      <button class="tab-btn" onclick="switchTab('features', this)"><span class="tab-num">3</span>功能規劃</button>
+      <button class="tab-btn" onclick="switchTab('ia', this)"><span class="tab-num">4</span>資訊架構與流程</button>
+      <button class="tab-btn" onclick="switchTab('model', this)"><span class="tab-num">5</span>內容模型</button>
+      <button class="tab-btn" onclick="switchTab('style', this)"><span class="tab-num">6</span>風格建議</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 1: CONCEPT ============ -->
+<div id="tab-concept" class="tab-content active">
+  <div class="w">
+    <div class="page-head">
+      <h2>1 · 概念與計價規則</h2>
+      <p>「愛豆存錢法」是什麼、怎麼算，以及本產品如何把這套玩法變成一個 app。</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>💡 什麼是愛豆存錢法？</h3>
+        <p>源自日本、在韓國粉圈爆紅的儲蓄遊戲：<b>規定自己「偶像每以某種形式出現一次，就存下一筆對應金額」</b>。發自拍、開直播、上節目⋯⋯每一次心動都變成存錢的觸發器。</p>
+        <ul>
+          <li><b>情感驅動</b>：不是靠意志力省錢，而是把追星的即時快樂綁定儲蓄行為。</li>
+          <li><b>金額自訂</b>：常見設定如發自拍 ₩30,000、限時動態 ₩10,000、留言 ₩5,000，完全依個人財力調整。</li>
+          <li><b>變形玩法</b>：對偶像心動就存、搶不到票就存（把失落轉成下次追星的資本）。</li>
+          <li><b>知名案例</b>：韓國粉絲想買 ₩769,000 的 AirPods Max，設定「發文 ₩3 萬、限動 ₩1 萬」，原估 3 個月、實際 <b>10 天就存到 ₩455,310</b>。</li>
+        </ul>
+        <div class="callout blue">存下來的錢通常回流到追星本身：演唱會門票、周邊、專輯、遠征旅費——「偶像越努力，我的存錢罐越滿」。</div>
+      </div>
+
+      <div class="card">
+        <h3>🧮 核心公式</h3>
+        <div class="formula">總存款 = Σ ( 事件類型 i 的發生次數 × 該類型單價 )</div>
+        <p>整個產品的計算核心只有這一條。app 要做的是：</p>
+        <ol>
+          <li><b>規則設定</b>：讓用戶為每種「偶像事件」定義單價（幣別可自訂，預設 NT$）。</li>
+          <li><b>快速記錄</b>：事件發生時一鍵 +1（追蹤者常在通勤、上課中滑到貼文，記錄必須 3 秒內完成）。</li>
+          <li><b>自動加總</b>：即時顯示存錢罐總額與目標進度，取代手動表單統計。</li>
+        </ol>
+        <h4>單價設計建議（梯度原則）</h4>
+        <ul>
+          <li><b>稀有事件高單價</b>：回歸、演唱會官宣、直播（次數少，單筆存多）。</li>
+          <li><b>日常事件低單價</b>：限動、留言（高頻，單價太高會存到破產）。</li>
+          <li>app 會在設定單價時提供「依上月頻率試算每月存款」的預覽，避免用戶設定超出負擔。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📊 試算範例 — 以真實年度統計為例</h3>
+      <p class="muted">數據來源：用戶提供的 2026 年度偶像活動統計（原以 Google 表單手動記錄——正是本產品要取代的痛點）。單價為示範值。</p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>事件類型</th><th class="num">年度次數</th><th class="num">示範單價 (NT$)</th><th class="num">小計 (NT$)</th><th>備註</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Weverse 發文</td><td class="num">94</td><td class="num">30</td><td class="num">2,820</td><td>本人發文，中頻率</td></tr>
+            <tr><td>Weverse 留言</td><td class="num">104</td><td class="num">10</td><td class="num">1,040</td><td>高頻日常互動，低單價</td></tr>
+            <tr><td>直播（團體＆個人）</td><td class="num">9</td><td class="num">100</td><td class="num">900</td><td>稀有事件，高單價</td></tr>
+            <tr><td>IG 發文</td><td class="num">30</td><td class="num">50</td><td class="num">1,500</td><td>正式發文</td></tr>
+            <tr><td>IG 限時動態</td><td class="num">183</td><td class="num">10</td><td class="num">1,830</td><td>最高頻事件，務必低單價</td></tr>
+            <tr><td>IG 留言</td><td class="num">37</td><td class="num">10</td><td class="num">370</td><td></td></tr>
+            <tr><td>Challenge</td><td class="num">26</td><td class="num">50</td><td class="num">1,300</td><td>含合作短影音</td></tr>
+            <tr><td>節目（主持／來賓）</td><td class="num">29</td><td class="num">100</td><td class="num">2,900</td><td>整集內容，高單價</td></tr>
+            <tr class="total"><td>合計</td><td class="num">512 次</td><td class="num">—</td><td class="num">NT$ 12,660</td><td>≈ 一張演唱會門票＋周邊預算</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">同一份規則只要調整單價倍率就能對準不同目標：全部 ×2 ≈ NT$25,320（看台好位＋遠征），×0.5 ≈ NT$6,330（學生方案）。app 將內建「倍率滑桿」讓用戶用歷史數據回推適合自己的單價。</div>
+    </div>
+
+    <div class="card">
+      <h3>🎯 產品定位一句話</h3>
+      <p style="font-size:16px; font-weight:700;">「偶像的每一次營業，都自動變成你的存款」——為追星族設計的遊戲化存錢記錄 app，取代手動表單，把統計變成收集的樂趣。</p>
+      <ul>
+        <li><b>不是</b>記帳軟體：不管支出、不做預算表，只做「存入」這一件事。</li>
+        <li><b>不是</b>銀行服務：MVP 不碰真實金流，是「記錄承諾」的存錢罐（實際轉帳為遠期展望）。</li>
+        <li><b>是</b>粉絲的年度回憶錄：512 筆記錄不只是錢，也是「他今年勤勤懇懇營業了 512 次」的證明。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 2: USERS ============ -->
+<div id="tab-users" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>2 · 目標用戶與使用情境</h2>
+      <p>誰在用愛豆存錢法、他們現在怎麼做、哪裡痛。</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:var(--rose-bg);">🎀</div>
+          <div>
+            <div class="name">P1 · 統計型本命粉「阿棠」</div>
+            <div class="meta">24 歲 · 研究生 · 追 K-pop 男團 3 年</div>
+          </div>
+        </div>
+        <div class="quote">「我用 Google 表單記了一整年，有時發的當下忘了記，也不知道到底漏了幾筆。」</div>
+        <ul>
+          <li>已在實行愛豆存錢法，用表單＋試算表手動統計。</li>
+          <li>在意數據完整性，會回頭補記。</li>
+          <li>年底想發「年度總結」貼文跟同擔分享。</li>
+        </ul>
+        <p><b>核心需求：</b>更快的記錄入口、自動加總、年度回顧報表。</p>
+      </div>
+
+      <div class="card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:var(--blue-bg);">🎫</div>
+          <div>
+            <div class="name">P2 · 目標導向粉「小魚」</div>
+            <div class="meta">19 歲 · 大學生 · 預算有限</div>
+          </div>
+        </div>
+        <div class="quote">「演唱會票＋應援棒要一萬二，我怕存不到，也怕存過頭吃土。」</div>
+        <ul>
+          <li>為特定目標（門票、周邊、遠征）而存。</li>
+          <li>零用錢有限，需要控制單價避免超出能力。</li>
+          <li>看到進度條前進會很有動力。</li>
+        </ul>
+        <p><b>核心需求：</b>目標進度視覺化、單價負擔試算、達成慶祝感。</p>
+      </div>
+
+      <div class="card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:var(--purple-bg);">🌈</div>
+          <div>
+            <div class="name">P3 · 多擔雜食粉「Momo」</div>
+            <div class="meta">28 歲 · 上班族 · 同時追 2 團＋1 位演員</div>
+          </div>
+        </div>
+        <div class="quote">「每個擔的營業頻率差很多，規則要分開算，錢也想分開存。」</div>
+        <ul>
+          <li>同時追多位偶像，各有不同事件與單價。</li>
+          <li>希望每個偶像一個獨立存錢罐、獨立目標。</li>
+          <li>追海外偶像，需要不同幣別（¥ / ₩ / NT$）。</li>
+        </ul>
+        <p><b>核心需求：</b>多偶像檔案、獨立規則與罐子、幣別自訂。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 User Stories（MVP 驗收基準）</h3>
+      <div class="story"><span class="id">US-1</span><span>身為粉絲，我可以<b>建立偶像檔案</b>（名字、應援色、幣別），並為它定義<b>事件類型與單價</b>，這樣我的存錢規則就完全符合我擔的營業型態。</span></div>
+      <div class="story"><span class="id">US-2</span><span>身為通勤中滑到偶像貼文的粉絲，我可以<b>在 3 秒內一鍵 +1 記錄事件</b>，app 自動幫我加上金額與時間，這樣我不會「發的當下忘了記」。</span></div>
+      <div class="story"><span class="id">US-3</span><span>身為為演唱會存錢的粉絲，我可以<b>設定目標金額</b>並隨時看到<b>存錢罐進度</b>，這樣我知道距離見到本人還差多少。</span></div>
+      <div class="story"><span class="id">US-4</span><span>身為統計型粉絲，我可以<b>回顧任意期間的明細與各事件次數統計</b>（像年度總表那樣），並在漏記時<b>補記或修正</b>過去的紀錄。</span></div>
+      <div class="story"><span class="id">US-5</span><span>身為多擔粉絲，我可以<b>切換不同偶像的存錢罐</b>，各自獨立計算，互不干擾。</span></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔍 與既有方案的差異</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th>方案</th><th>優點</th><th>痛點（我們的機會）</th></tr></thead>
+          <tbody>
+            <tr><td>Google 表單＋試算表<br><span class="muted">(現況主流)</span></td><td>免費、欄位自由</td><td>入口深、要自己寫公式、無進度視覺化、手機體驗差</td></tr>
+            <tr><td>一般記帳 app</td><td>成熟、有圖表</td><td>以「支出／預算」為中心，沒有事件×單價的規則引擎，無追星語境</td></tr>
+            <tr><td>韓國偶像存錢專用 app<br><span class="muted">(如新聞報導的儲蓄追蹤 app)</span></td><td>語境正確</td><td>多為韓文、綁韓國金融服務，台灣粉絲難用</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🎬 典型使用情境</h3>
+        <ol>
+          <li><b>晨間通勤</b>：滑 IG 看到限動 ×3 → 開 app 首頁點「IG 限動 +1」三下 → 存錢罐 +NT$30，關掉。全程 5 秒。</li>
+          <li><b>週末直播</b>：偶像開直播 → 記一筆「直播 +1」（NT$100）→ 進度條從 61% 跳到 62%，跳出小慶祝動畫。</li>
+          <li><b>月底回顧</b>：打開統計頁看本月各事件次數 → 發現限動比上月多一倍 → 用倍率滑桿把限動單價從 10 調到 5。</li>
+          <li><b>年底總結</b>：匯出年度統計卡（512 次營業、NT$12,660）→ 發到 Threads 跟同擔炫耀。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: FEATURES ============ -->
+<div id="tab-features" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>3 · 功能規劃</h2>
+      <p>以 MVP（原型階段實作）與 V2（後續迭代）分級。<span class="tag mvp">MVP</span> 原型必做　<span class="tag v2">V2</span> 迭代再做　<span class="tag future">展望</span> 遠期方向</p>
+    </div>
+
+    <div class="card">
+      <h3>🧱 功能總表</h3>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>#</th><th>功能</th><th>說明</th><th>優先級</th></tr></thead>
+        <tbody>
+          <tr><td>F1</td><td><b>偶像檔案</b></td><td>建立多位偶像：名字、暱稱、應援色、頭像 emoji、幣別（預設 NT$，可選 ₩ / ¥ / US$ 或自訂符號）。每位偶像一個獨立存錢罐。</td><td><span class="tag mvp">MVP</span></td></tr>
+          <tr><td>F2</td><td><b>事件規則引擎</b></td><td>每位偶像可自訂事件類型（名稱、icon、單價）。內建預設模板：Weverse 發文/留言、直播、IG 發文/限動/留言、Challenge、節目，一鍵套用後可改。</td><td><span class="tag mvp">MVP</span> <span class="tag core">核心</span></td></tr>
+          <tr><td>F3</td><td><b>一鍵快速記帳</b></td><td>首頁以大按鈕陣列呈現所有事件類型，點一下 = +1（自動記金額＋時間戳），支援連點、長按輸入次數、備註（選填）。可撤銷最近一筆。</td><td><span class="tag mvp">MVP</span> <span class="tag core">核心</span></td></tr>
+          <tr><td>F4</td><td><b>存錢罐與目標</b></td><td>每罐顯示累計總額；可設定目標（名稱、金額、期限，如「安可場門票 NT$8,800」），以進度條＋罐子填滿動畫視覺化，達成時慶祝畫面。</td><td><span class="tag mvp">MVP</span></td></tr>
+          <tr><td>F5</td><td><b>歷史紀錄</b></td><td>依時間排序的存入明細；可補記過去日期、編輯、刪除。各事件類型累計次數一覽（對齊手動表單的年度總表）。</td><td><span class="tag mvp">MVP</span></td></tr>
+          <tr><td>F6</td><td><b>單價負擔試算</b></td><td>設定單價時，依近 30 天頻率預估「照這規則每月會存多少」，附倍率滑桿一鍵縮放全部單價。</td><td><span class="tag mvp">MVP</span></td></tr>
+          <tr><td>F7</td><td><b>統計圖表</b></td><td>月／年視圖：各事件次數長條圖、存款折線、事件占比。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F8</td><td><b>年度回顧</b></td><td>自動生成「2026 年他營業了 512 次」風格的年度總結頁（次數總表＋金額＋亮點事件）。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F9</td><td><b>分享圖卡</b></td><td>把目標達成／年度回顧輸出成社群友善的直式圖卡（含應援色主題），一鍵分享 Threads / IG。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F10</td><td><b>提醒與連續紀錄</b></td><td>每日回顧提醒（「今天有漏記的營業嗎？」）、連續記錄 streak 徽章。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F11</td><td><b>特殊玩法規則</b></td><td>「心動就存」自由存入按鈕、「搶不到票罰存」等一次性事件。</td><td><span class="tag v2">V2</span></td></tr>
+          <tr><td>F12</td><td><b>真實金流串接</b></td><td>連結銀行子帳戶／電子錢包自動轉帳（參考韓國 Toss Bank 與偶像節目合作模式）。涉及金融法規，僅列為展望。</td><td><span class="tag future">展望</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>✂️ MVP 邊界（原型階段刻意不做）</h3>
+        <ul>
+          <li><b>不做帳號系統</b>：原型以裝置本機儲存（localStorage），無註冊登入。</li>
+          <li><b>不做自動偵測</b>：不串社群 API 自動抓貼文（各平台 API 限制多），記錄一律手動一鍵完成——「手動但極快」是刻意的產品決策，記錄本身就是儀式感。</li>
+          <li><b>不做支出記帳</b>：只記「存入」，不管花費。</li>
+          <li><b>不碰真錢</b>：存錢罐是承諾記錄，用戶自行對應到實體撲滿或銀行帳戶。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📐 成功指標（原型驗證用）</h3>
+        <ul>
+          <li>記錄一筆事件的操作時間 ≤ 3 秒（從開啟到完成）。</li>
+          <li>新用戶從開啟到完成規則設定 ≤ 2 分鐘（靠預設模板）。</li>
+          <li>試算結果與手動表單統計一致（用年度數據 512 筆驗證）。</li>
+          <li>質化驗證：給 2–3 位實行中的粉絲試用，確認「比表單好用」。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 4: IA & FLOW ============ -->
+<div id="tab-ia" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>4 · 資訊架構與畫面流程</h2>
+      <p>Sitemap、主要畫面線框、關鍵操作流程。MVP 共 5 個主要畫面＋1 個首次引導。</p>
+    </div>
+
+    <div class="card">
+      <h3>🗺️ Sitemap</h3>
+<div class="tree">🐷 愛豆存錢罐
+├── <b>0 首次引導 Onboarding</b>（僅首次）
+│   ├── 建立第一位偶像（名字・應援色・幣別）
+│   └── 套用預設事件模板 → 調整單價（附負擔試算）
+├── <b>1 存錢罐首頁 Home</b>（預設落點）
+│   ├── 偶像切換器（多擔）
+│   ├── 罐子視覺＋累計總額＋目標進度條
+│   ├── 事件快速記帳按鈕陣列（一鍵 +1）
+│   └── 最近 3 筆紀錄（可撤銷）
+├── <b>2 歷史紀錄 History</b>
+│   ├── 明細列表（日期・事件・金額・備註）
+│   ├── 事件次數統計總表（年度回顧的資料基礎）
+│   └── 補記／編輯／刪除
+├── <b>3 目標 Goals</b>
+│   ├── 進行中目標（進度・剩餘・預估達成日）
+│   └── 已達成目標（成就牆）
+├── <b>4 規則設定 Rules</b>
+│   ├── 事件類型管理（新增・改名・改單價・排序・停用）
+│   └── 倍率滑桿＋每月負擔試算
+└── <b>5 設定 Settings</b>
+    ├── 偶像檔案管理（新增／編輯／刪除偶像）
+    ├── 幣別與顯示
+    └── 資料匯出（CSV）／清除</div>
+      <p class="rel-note">導覽採底部 tab bar：首頁・紀錄・目標・設定（規則設定從首頁與設定皆可進入）。一切以「首頁一鍵記帳」為中心，其他畫面都是支援角色。</p>
+    </div>
+
+    <div class="card">
+      <h3>📱 主要畫面線框</h3>
+      <div class="grid-3">
+        <div>
+          <div class="wire">
+            <div class="wire-title">1 · 存錢罐首頁</div>
+            <div class="zone">◀ 偶像切換：🎀 阿圓 ▼　⚙️</div>
+            <div class="zone hero">🐷 罐子視覺（應援色）<br><b style="font-size:16px;">NT$ 12,660</b><br>目標「安可場」進度 ▓▓▓░ 72%</div>
+            <div class="zone action">Weverse發文 +30 ｜ 限動 +10<br>直播 +100 ｜ IG發文 +50<br>留言 +10 ｜ Challenge +50 ⋯</div>
+            <div class="zone">最近：限動 +10（剛剛）↩︎ 撤銷</div>
+            <div class="zone">▣ 首頁 ｜ 紀錄 ｜ 目標 ｜ 設定</div>
+          </div>
+          <div class="wire-caption">核心畫面。事件按鈕直接顯示單價，點擊 = 完成記帳，帶輕微動畫與音效回饋。</div>
+        </div>
+        <div>
+          <div class="wire">
+            <div class="wire-title">2 · 歷史紀錄</div>
+            <div class="zone">期間切換：本月 ▼　｜　＋補記</div>
+            <div class="zone hero">本期統計總表<br>發文94・留言104・直播9・限動183⋯<br>合計 512 次 · NT$12,660</div>
+            <div class="zone">7/14　IG限動 +10<br>7/14　IG限動 +10<br>7/13　直播 +100 「回歸直播！」<br>7/12　Weverse發文 +30</div>
+            <div class="zone">▣ 首頁 ｜ <b>紀錄</b> ｜ 目標 ｜ 設定</div>
+          </div>
+          <div class="wire-caption">上半是「年度總表」的即時版；下半是可編輯的明細，解決漏記／誤記。</div>
+        </div>
+        <div>
+          <div class="wire">
+            <div class="wire-title">3 · 規則設定</div>
+            <div class="zone">事件類型　　　　單價　　狀態</div>
+            <div class="zone">📝 Weverse發文　NT$30　✏️<br>💬 Weverse留言　NT$10　✏️<br>📺 直播　　　　 NT$100　✏️<br>＋ 新增事件類型</div>
+            <div class="zone hero">倍率滑桿 ×0.5 ─●─ ×2<br>依近 30 天頻率<br>預估每月存 <b>NT$ 1,055</b></div>
+            <div class="zone action">套用預設模板（8 種事件）</div>
+          </div>
+          <div class="wire-caption">單價旁即時顯示每月負擔試算，防止「存到吃土」。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🔀 關鍵流程</h3>
+      <h4>Flow A · 首次使用（目標 ≤ 2 分鐘）</h4>
+      <div class="flow">
+        <div class="step">開啟 app</div><div class="arr">→</div>
+        <div class="step">建立偶像（名字・應援色・幣別）</div><div class="arr">→</div>
+        <div class="step">套用預設事件模板</div><div class="arr">→</div>
+        <div class="step">滑倍率滑桿看負擔試算</div><div class="arr">→</div>
+        <div class="step hl">進入首頁，可開始記帳</div>
+      </div>
+      <h4>Flow B · 日常記帳（目標 ≤ 3 秒）</h4>
+      <div class="flow">
+        <div class="step">滑到偶像貼文 😍</div><div class="arr">→</div>
+        <div class="step">開 app（直接落在首頁）</div><div class="arr">→</div>
+        <div class="step">點事件按鈕 +1</div><div class="arr">→</div>
+        <div class="step hl">罐子 +NT$10，進度條前進，完成</div>
+      </div>
+      <h4>Flow C · 目標達成</h4>
+      <div class="flow">
+        <div class="step">記帳使進度達 100%</div><div class="arr">→</div>
+        <div class="step hl">全螢幕慶祝（應援色彩帶）</div><div class="arr">→</div>
+        <div class="step">目標移入成就牆</div><div class="arr">→</div>
+        <div class="step">引導設定下一個目標／分享圖卡(V2)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 5: CONTENT MODEL ============ -->
+<div id="tab-model" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>5 · 內容模型</h2>
+      <p>五個資料實體。原型階段以 localStorage 單機儲存，結構已預留未來雲端同步空間。</p>
+    </div>
+
+    <div class="grid-3">
+      <div class="entity">
+        <div class="ent-head" style="background:var(--rose);">Idol 偶像檔案</div>
+        <table>
+          <tr><td class="pk">id</td><td>唯一識別碼</td></tr>
+          <tr><td>name</td><td>名字／暱稱</td></tr>
+          <tr><td>emoji</td><td>頭像 emoji</td></tr>
+          <tr><td>color</td><td>應援色（hex，驅動主題）</td></tr>
+          <tr><td>currency</td><td>幣別符號（預設 NT$）</td></tr>
+          <tr><td>createdAt</td><td>建立時間</td></tr>
+        </table>
+      </div>
+      <div class="entity">
+        <div class="ent-head" style="background:var(--blue);">EventType 事件類型</div>
+        <table>
+          <tr><td class="pk">id</td><td>唯一識別碼</td></tr>
+          <tr><td>idolId</td><td>所屬偶像 →Idol</td></tr>
+          <tr><td>name</td><td>名稱（如「IG 限動」）</td></tr>
+          <tr><td>icon</td><td>emoji icon</td></tr>
+          <tr><td>amount</td><td>單價（正整數）</td></tr>
+          <tr><td>sortOrder</td><td>首頁按鈕排序</td></tr>
+          <tr><td>archived</td><td>停用（保留歷史）</td></tr>
+        </table>
+      </div>
+      <div class="entity">
+        <div class="ent-head" style="background:var(--green);">Entry 存入紀錄</div>
+        <table>
+          <tr><td class="pk">id</td><td>唯一識別碼</td></tr>
+          <tr><td>idolId</td><td>所屬偶像 →Idol</td></tr>
+          <tr><td>eventTypeId</td><td>事件類型 →EventType</td></tr>
+          <tr><td>amount</td><td>金額快照（單價改動不影響歷史）</td></tr>
+          <tr><td>occurredAt</td><td>事件日期（可補記過去）</td></tr>
+          <tr><td>note</td><td>備註（選填）</td></tr>
+        </table>
+      </div>
+      <div class="entity">
+        <div class="ent-head" style="background:var(--amber);">Goal 目標</div>
+        <table>
+          <tr><td class="pk">id</td><td>唯一識別碼</td></tr>
+          <tr><td>idolId</td><td>所屬偶像 →Idol</td></tr>
+          <tr><td>title</td><td>名稱（如「安可場門票」）</td></tr>
+          <tr><td>targetAmount</td><td>目標金額</td></tr>
+          <tr><td>deadline</td><td>期限（選填）</td></tr>
+          <tr><td>achievedAt</td><td>達成時間（null=進行中）</td></tr>
+        </table>
+      </div>
+      <div class="entity">
+        <div class="ent-head" style="background:var(--gray);">Settings 全域設定</div>
+        <table>
+          <tr><td>activeIdolId</td><td>目前選中的偶像</td></tr>
+          <tr><td>theme</td><td>視覺主題（見分頁 6）</td></tr>
+          <tr><td>onboarded</td><td>是否完成首次引導</td></tr>
+          <tr><td>schemaVersion</td><td>資料結構版本（利遷移）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>🔗 關聯與計算規則</h3>
+      <ul>
+        <li><b>Idol 1—N EventType</b>、<b>Idol 1—N Entry</b>、<b>Idol 1—N Goal</b>：一切以偶像為分隔，多擔互不干擾（US-5）。</li>
+        <li><b>罐子總額</b> = 該偶像所有 Entry.amount 之和（純推導值，不另存，避免不同步）。</li>
+        <li><b>Entry.amount 是快照</b>：記錄當下複製 EventType 單價。之後調整單價只影響新紀錄，歷史金額不變——這是規則引擎最重要的一致性決策。</li>
+        <li><b>目標進度</b> = 罐子總額 ÷ targetAmount。多目標時採「共享罐子、逐一達成」：達成第一個後，進度以累計總額對下一個目標門檻計算（原型先支援單一進行中目標，簡化心智模型）。</li>
+        <li><b>事件次數統計</b> = 按 eventTypeId 分組計數 Entry——即分頁 1 試算表的自動化版本。</li>
+        <li><b>刪除策略</b>：EventType 不硬刪、只 archived（保護歷史 Entry 的參照）；Idol 刪除需二次確認並連帶刪除其所有資料。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 6: STYLE ============ -->
+<div id="tab-style" class="tab-content">
+  <div class="w">
+    <div class="page-head">
+      <h2>6 · 風格建議</h2>
+      <p>三個視覺方向供拍板。推薦 A（應援色主題）為預設、B 為淺色替代主題；C 為差異化大膽路線。</p>
+    </div>
+
+    <div class="grid-3">
+      <!-- Direction A -->
+      <div class="style-card">
+        <div class="preview" style="background:#0b1020; color:#fff;">
+          <div style="font-size:11px; opacity:0.6; letter-spacing:1px;">DIRECTION A · 推薦</div>
+          <div style="font-size:22px; font-weight:800; margin:6px 0; color:#7dd3fc;">NT$ 12,660</div>
+          <div style="height:8px; background:rgba(255,255,255,0.12); border-radius:99px; overflow:hidden; margin:8px 0 12px;"><div style="width:72%; height:100%; background:linear-gradient(90deg,#38bdf8,#a78bfa);"></div></div>
+          <span class="mock-pill" style="background:rgba(56,189,248,0.18); color:#7dd3fc; border:1px solid rgba(56,189,248,0.4);">限動 +10</span>
+          <span class="mock-pill" style="background:rgba(167,139,250,0.18); color:#c4b5fd; border:1px solid rgba(167,139,250,0.4);">直播 +100</span>
+          <span class="mock-pill" style="background:rgba(244,114,182,0.18); color:#f9a8d4; border:1px solid rgba(244,114,182,0.4);">發文 +30</span>
+        </div>
+        <div class="body">
+          <h3>A · 應援色主題（Bias Color）</h3>
+          <p>深色底＋以<b>偶像應援色動態換膚</b>：進度條、按鈕、罐子光暈全部跟著 Idol.color 走。切換偶像＝切換整個 app 的靈魂色。</p>
+          <div class="swatches">
+            <div><div class="swatch" style="background:#0b1020;"></div><div class="swatch-label">#0B1020</div></div>
+            <div><div class="swatch" style="background:#151b2e;"></div><div class="swatch-label">#151B2E</div></div>
+            <div><div class="swatch" style="background:#38bdf8;"></div><div class="swatch-label">應援色①</div></div>
+            <div><div class="swatch" style="background:#a78bfa;"></div><div class="swatch-label">應援色②</div></div>
+            <div><div class="swatch" style="background:#f8fafc;"></div><div class="swatch-label">#F8FAFC</div></div>
+          </div>
+          <div class="pros-cons">
+            <b>✅ 優點</b>像演唱會夜的手燈海，情感連結最強；多擔切換時差異感明顯；深色省電、夜間滑手機舒適。
+            <b>⚠️ 注意</b>應援色明度差異大（黃 vs 深紫），需要自動對比度調整邏輯。
+          </div>
+        </div>
+      </div>
+
+      <!-- Direction B -->
+      <div class="style-card">
+        <div class="preview" style="background:#fdf6ee; color:#4a3f35;">
+          <div style="font-size:11px; color:#b09a83; letter-spacing:1px;">DIRECTION B</div>
+          <div style="font-size:22px; font-weight:800; margin:6px 0; color:#e07a5f;">NT$ 12,660</div>
+          <div style="height:8px; background:#efe3d3; border-radius:99px; overflow:hidden; margin:8px 0 12px;"><div style="width:72%; height:100%; background:#e8a87c;"></div></div>
+          <span class="mock-pill" style="background:#fff; color:#4a3f35; box-shadow:0 2px 6px rgba(0,0,0,0.07);">🍑 限動 +10</span>
+          <span class="mock-pill" style="background:#fff; color:#4a3f35; box-shadow:0 2px 6px rgba(0,0,0,0.07);">🧸 直播 +100</span>
+          <span class="mock-pill" style="background:#fff; color:#4a3f35; box-shadow:0 2px 6px rgba(0,0,0,0.07);">☁️ 發文 +30</span>
+        </div>
+        <div class="body">
+          <h3>B · 韓系極簡奶油風</h3>
+          <p>奶油白＋大地暖色、超大圓角、柔和陰影、手寫感標題字。整體像韓系文具／手帳品牌，「溫柔地存錢」。</p>
+          <div class="swatches">
+            <div><div class="swatch" style="background:#fdf6ee;"></div><div class="swatch-label">#FDF6EE</div></div>
+            <div><div class="swatch" style="background:#efe3d3;"></div><div class="swatch-label">#EFE3D3</div></div>
+            <div><div class="swatch" style="background:#e8a87c;"></div><div class="swatch-label">#E8A87C</div></div>
+            <div><div class="swatch" style="background:#e07a5f;"></div><div class="swatch-label">#E07A5F</div></div>
+            <div><div class="swatch" style="background:#4a3f35;"></div><div class="swatch-label">#4A3F35</div></div>
+          </div>
+          <div class="pros-cons">
+            <b>✅ 優點</b>親和、耐看、截圖分享好看；與「儲蓄＝溫柔累積」的氣質吻合；淺色系實作單純。
+            <b>⚠️ 注意</b>個別偶像的識別度弱（應援色只出現在小細節），多擔用戶區隔感較低。
+          </div>
+        </div>
+      </div>
+
+      <!-- Direction C -->
+      <div class="style-card">
+        <div class="preview" style="background:#c7f0ff; color:#1e1b4b; background-image:radial-gradient(circle at 80% 20%, #ffd6f2 0 18%, transparent 19%), radial-gradient(circle at 15% 80%, #fff3a3 0 14%, transparent 15%);">
+          <div style="font-size:11px; letter-spacing:1px; font-weight:800;">DIRECTION C</div>
+          <div style="display:inline-block; font-size:22px; font-weight:900; margin:6px 0; background:#fff; border:3px solid #1e1b4b; border-radius:10px; padding:2px 10px; box-shadow:3px 3px 0 #1e1b4b;">NT$ 12,660 ⭐</div>
+          <div style="height:10px; background:#fff; border:2px solid #1e1b4b; border-radius:99px; overflow:hidden; margin:8px 0 12px;"><div style="width:72%; height:100%; background:repeating-linear-gradient(45deg,#ff8fcf 0 8px,#ffd6f2 8px 16px);"></div></div>
+          <span class="mock-pill" style="background:#fff; border:2px solid #1e1b4b; box-shadow:2px 2px 0 #1e1b4b;">📸 限動 +10</span>
+          <span class="mock-pill" style="background:#fff3a3; border:2px solid #1e1b4b; box-shadow:2px 2px 0 #1e1b4b;">🔴 直播 +100</span>
+        </div>
+        <div class="body">
+          <h3>C · Y2K 貼紙手帳風</h3>
+          <p>高彩度粉藍黃＋粗描邊＋硬陰影＋貼紙／膠帶元素。每筆存入像「貼一張貼紙進手帳」，年度回顧就是一本貼滿的拼貼冊。</p>
+          <div class="swatches">
+            <div><div class="swatch" style="background:#c7f0ff;"></div><div class="swatch-label">#C7F0FF</div></div>
+            <div><div class="swatch" style="background:#ffd6f2;"></div><div class="swatch-label">#FFD6F2</div></div>
+            <div><div class="swatch" style="background:#fff3a3;"></div><div class="swatch-label">#FFF3A3</div></div>
+            <div><div class="swatch" style="background:#ff8fcf;"></div><div class="swatch-label">#FF8FCF</div></div>
+            <div><div class="swatch" style="background:#1e1b4b;"></div><div class="swatch-label">#1E1B4B</div></div>
+          </div>
+          <div class="pros-cons">
+            <b>✅ 優點</b>差異化最強、最有「收集慾」與分享傳播力，貼合 Z 世代粉圈美學。
+            <b>⚠️ 注意</b>視覺元素多、實作成本最高；長期使用可能視覺疲勞；數字易讀性要特別把關。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>🧭 建議與待拍板事項</h3>
+      <ul>
+        <li><b>建議組合</b>：以 <b>A（應援色主題）為預設</b>——它把「這是為追星而生的 app」說得最清楚，且應援色換膚直接由資料模型的 Idol.color 驅動，功能與視覺一體；B 作為淺色替代主題（Settings.theme 已預留）。C 的貼紙概念可局部借用（成就徽章、年度回顧拼貼）而不必整套採用。</li>
+        <li><b>共通原則</b>：數字用等寬字體（tabular-nums）確保金額對齊；記帳按鈕最小點擊區 44×44px；動效輕巧（進度條彈跳、+1 飛入罐子）但可關閉。</li>
+      </ul>
+      <div class="callout rose"><b>待拍板：</b>① 風格方向（A / B / C 或組合）　② MVP 功能邊界是否同意（見分頁 3）　③ 預設事件模板的八種類型與示範單價是否符合你的追星習慣。拍板後即進入原型製作階段（單頁 HTML＋localStorage 可操作原型）。</div>
+    </div>
+  </div>
+</div>
+
+<footer>愛豆存錢罐 · 產品規劃文件 v1 · Phase 1 · 拍板後進入原型階段</footer>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0 });
+}
+</script>
+</body>
+</html>
